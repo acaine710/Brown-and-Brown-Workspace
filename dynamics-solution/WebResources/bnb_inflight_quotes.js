@@ -19,8 +19,11 @@ window.BnB = window.BnB || {};
 BnB.InFlightQuotes = (function () {
 
   // ── Constants ──────────────────────────────────────────────────────────────
-  const VERSION = "1.0.0";
-  const ENTITY  = "bnb_inflightquotes";
+  const VERSION      = "1.0.0";
+  const ENTITY       = "bnb_inflightquotes";
+  // Maximum records retrieved per page. Override via window.BNB_PAGE_SIZE.
+  const PAGE_SIZE    = (window.BNB_PAGE_SIZE && Number.isInteger(window.BNB_PAGE_SIZE) && window.BNB_PAGE_SIZE > 0)
+                       ? window.BNB_PAGE_SIZE : 2000;
   const ODATA_SELECT = [
     "bnb_name","bnb_account_name","bnb_producer_name","bnb_producer_code",
     "bnb_business_segment","bnb_product_type","bnb_quote_status",
@@ -195,7 +198,7 @@ BnB.InFlightQuotes = (function () {
     _state.usingSampleData = false;
     const result = await api.retrieveMultipleRecords(
       ENTITY,
-      `?$select=${ODATA_SELECT}&$orderby=bnb_days_open desc&$top=500`
+      `?$select=${ODATA_SELECT}&$orderby=bnb_days_open desc&$top=${PAGE_SIZE}`
     );
     _state.allQuotes = result.entities.map(normalizeQuote);
 
