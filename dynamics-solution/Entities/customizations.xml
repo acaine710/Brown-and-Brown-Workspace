@@ -1,0 +1,796 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Brown & Brown Insurance – In-Flight Quotes Workspace
+  Dataverse Entity (Table) Definitions
+  Import this file as part of the BnBInFlightQuotes solution.
+-->
+<ImportExportXml>
+  <Entities>
+
+    <!-- ================================================================
+         bnb_carrier  –  Carrier master (Hartford, Travelers, Chubb, etc.)
+         ================================================================ -->
+    <Entity>
+      <Name LocalizedName="Carrier" OriginalName="bnb_carrier">bnb_carrier</Name>
+      <EntityInfo>
+        <entity Name="bnb_carrier">
+          <LocalizedNames>
+            <LocalizedName description="Carrier" languagecode="1033"/>
+          </LocalizedNames>
+          <LocalizedCollectionNames>
+            <LocalizedCollectionName description="Carriers" languagecode="1033"/>
+          </LocalizedCollectionNames>
+          <attributes>
+            <attribute PhysicalName="bnb_carrierid">
+              <Type>primarykey</Type>
+              <Name>bnb_carrierid</Name>
+              <LogicalName>bnb_carrierid</LogicalName>
+              <RequiredLevel>systemrequired</RequiredLevel>
+              <DisplayMasks>ValidForAdvancedFind ValidForForm ValidForGrid</DisplayMasks>
+              <LocalizedNames>
+                <LocalizedName description="Carrier" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_name">
+              <Type>nvarchar</Type>
+              <Name>bnb_name</Name>
+              <LogicalName>bnb_name</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <MaxLength>200</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Carrier Name" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_naic_code">
+              <Type>nvarchar</Type>
+              <Name>bnb_naic_code</Name>
+              <LogicalName>bnb_naic_code</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <MaxLength>10</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="NAIC Code" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_am_best_rating">
+              <Type>nvarchar</Type>
+              <Name>bnb_am_best_rating</Name>
+              <LogicalName>bnb_am_best_rating</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <MaxLength>10</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="AM Best Rating" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_segment_appetite">
+              <Type>nvarchar</Type>
+              <Name>bnb_segment_appetite</Name>
+              <LogicalName>bnb_segment_appetite</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <MaxLength>2000</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Segment Appetite (JSON)" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_avg_turnaround_days">
+              <Type>integer</Type>
+              <Name>bnb_avg_turnaround_days</Name>
+              <LogicalName>bnb_avg_turnaround_days</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Avg Turnaround (Days)" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_portal_url">
+              <Type>nvarchar</Type>
+              <Name>bnb_portal_url</Name>
+              <LogicalName>bnb_portal_url</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <MaxLength>500</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Portal URL" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_is_preferred">
+              <Type>bool</Type>
+              <Name>bnb_is_preferred</Name>
+              <LogicalName>bnb_is_preferred</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Preferred Carrier?" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+          </attributes>
+          <DisplayCollectionName>
+            <Titles>
+              <Title description="Carriers" languagecode="1033"/>
+            </Titles>
+          </DisplayCollectionName>
+          <DisplayName>
+            <Titles>
+              <Title description="Carrier" languagecode="1033"/>
+            </Titles>
+          </DisplayName>
+          <EntitySetName>bnb_carriers</EntitySetName>
+          <IsAuditEnabled>true</IsAuditEnabled>
+          <IsQuickCreateEnabled>true</IsQuickCreateEnabled>
+          <PrimaryNameAttribute>bnb_name</PrimaryNameAttribute>
+          <SchemaName>bnb_carrier</SchemaName>
+        </entity>
+      </EntityInfo>
+    </Entity>
+
+    <!-- ================================================================
+         bnb_inflightquote  –  Core "In-Flight Quote" record
+         ================================================================ -->
+    <Entity>
+      <Name LocalizedName="In-Flight Quote" OriginalName="bnb_inflightquote">bnb_inflightquote</Name>
+      <EntityInfo>
+        <entity Name="bnb_inflightquote">
+          <LocalizedNames>
+            <LocalizedName description="In-Flight Quote" languagecode="1033"/>
+          </LocalizedNames>
+          <LocalizedCollectionNames>
+            <LocalizedCollectionName description="In-Flight Quotes" languagecode="1033"/>
+          </LocalizedCollectionNames>
+          <attributes>
+
+            <!-- PK -->
+            <attribute PhysicalName="bnb_inflightquoteid">
+              <Type>primarykey</Type>
+              <Name>bnb_inflightquoteid</Name>
+              <LogicalName>bnb_inflightquoteid</LogicalName>
+              <RequiredLevel>systemrequired</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="In-Flight Quote" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <!-- Quote number / name -->
+            <attribute PhysicalName="bnb_name">
+              <Type>nvarchar</Type>
+              <Name>bnb_name</Name>
+              <LogicalName>bnb_name</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <MaxLength>200</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Quote Number" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <!-- Account / Insured -->
+            <attribute PhysicalName="bnb_account_name">
+              <Type>nvarchar</Type>
+              <Name>bnb_account_name</Name>
+              <LogicalName>bnb_account_name</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <MaxLength>300</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Account / Insured Name" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <!-- Producer (lookup to SystemUser) -->
+            <attribute PhysicalName="bnb_producercode">
+              <Type>nvarchar</Type>
+              <Name>bnb_producercode</Name>
+              <LogicalName>bnb_producercode</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <MaxLength>50</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Producer Code" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <attribute PhysicalName="bnb_producer_name">
+              <Type>nvarchar</Type>
+              <Name>bnb_producer_name</Name>
+              <LogicalName>bnb_producer_name</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <MaxLength>200</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Producer Name" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <!-- Business segment picklist -->
+            <attribute PhysicalName="bnb_business_segment">
+              <Type>picklist</Type>
+              <Name>bnb_business_segment</Name>
+              <LogicalName>bnb_business_segment</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Business Segment" languagecode="1033"/>
+              </LocalizedNames>
+              <optionset Name="bnb_business_segment_os">
+                <OptionSetType>Picklist</OptionSetType>
+                <options>
+                  <option value="100000000"><Labels><Label description="Personal Lines"          languagecode="1033"/></Labels></option>
+                  <option value="100000001"><Labels><Label description="P&amp;C Small Commercial"      languagecode="1033"/></Labels></option>
+                  <option value="100000002"><Labels><Label description="P&amp;C Mid-Market Commercial" languagecode="1033"/></Labels></option>
+                  <option value="100000003"><Labels><Label description="P&amp;C Large Commercial"      languagecode="1033"/></Labels></option>
+                  <option value="100000004"><Labels><Label description="Employee Benefits"        languagecode="1033"/></Labels></option>
+                  <option value="100000005"><Labels><Label description="Dealer Services"          languagecode="1033"/></Labels></option>
+                  <option value="100000006"><Labels><Label description="Surety / Bonds"           languagecode="1033"/></Labels></option>
+                </options>
+              </optionset>
+            </attribute>
+
+            <!-- Product type -->
+            <attribute PhysicalName="bnb_product_type">
+              <Type>nvarchar</Type>
+              <Name>bnb_product_type</Name>
+              <LogicalName>bnb_product_type</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <MaxLength>100</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Product Type" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <!-- Quote status -->
+            <attribute PhysicalName="bnb_quote_status">
+              <Type>picklist</Type>
+              <Name>bnb_quote_status</Name>
+              <LogicalName>bnb_quote_status</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Quote Status" languagecode="1033"/>
+              </LocalizedNames>
+              <optionset Name="bnb_quote_status_os">
+                <OptionSetType>Picklist</OptionSetType>
+                <options>
+                  <option value="200000000"><Labels><Label description="Open – In Progress"  languagecode="1033"/></Labels></option>
+                  <option value="200000001"><Labels><Label description="Submitted to Carrier" languagecode="1033"/></Labels></option>
+                  <option value="200000002"><Labels><Label description="Quote Received"       languagecode="1033"/></Labels></option>
+                  <option value="200000003"><Labels><Label description="Presented to Client"  languagecode="1033"/></Labels></option>
+                  <option value="200000004"><Labels><Label description="Bound / Won"          languagecode="1033"/></Labels></option>
+                  <option value="200000005"><Labels><Label description="Lost"                 languagecode="1033"/></Labels></option>
+                  <option value="200000006"><Labels><Label description="Expired / No Quote"   languagecode="1033"/></Labels></option>
+                  <option value="200000007"><Labels><Label description="Stalled"              languagecode="1033"/></Labels></option>
+                </options>
+              </optionset>
+            </attribute>
+
+            <!-- Source system -->
+            <attribute PhysicalName="bnb_source_system">
+              <Type>picklist</Type>
+              <Name>bnb_source_system</Name>
+              <LogicalName>bnb_source_system</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Source System" languagecode="1033"/>
+              </LocalizedNames>
+              <optionset Name="bnb_source_system_os">
+                <OptionSetType>Picklist</OptionSetType>
+                <options>
+                  <option value="300000000"><Labels><Label description="AMS360"          languagecode="1033"/></Labels></option>
+                  <option value="300000001"><Labels><Label description="Sagitta"          languagecode="1033"/></Labels></option>
+                  <option value="300000002"><Labels><Label description="BenefitPoint"     languagecode="1033"/></Labels></option>
+                  <option value="300000003"><Labels><Label description="EPIC"             languagecode="1033"/></Labels></option>
+                  <option value="300000004"><Labels><Label description="Carrier Portal"   languagecode="1033"/></Labels></option>
+                  <option value="300000005"><Labels><Label description="Email Ingestion"  languagecode="1033"/></Labels></option>
+                  <option value="300000006"><Labels><Label description="Submission Log"   languagecode="1033"/></Labels></option>
+                </options>
+              </optionset>
+            </attribute>
+
+            <!-- Carrier lookup -->
+            <attribute PhysicalName="bnb_carrier_name">
+              <Type>nvarchar</Type>
+              <Name>bnb_carrier_name</Name>
+              <LogicalName>bnb_carrier_name</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <MaxLength>200</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Primary Carrier" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <!-- Premium fields -->
+            <attribute PhysicalName="bnb_quoted_premium">
+              <Type>money</Type>
+              <Name>bnb_quoted_premium</Name>
+              <LogicalName>bnb_quoted_premium</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <Precision>2</Precision>
+              <LocalizedNames>
+                <LocalizedName description="Quoted Premium" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <attribute PhysicalName="bnb_expiring_premium">
+              <Type>money</Type>
+              <Name>bnb_expiring_premium</Name>
+              <LogicalName>bnb_expiring_premium</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <Precision>2</Precision>
+              <LocalizedNames>
+                <LocalizedName description="Expiring Premium" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <attribute PhysicalName="bnb_bound_premium">
+              <Type>money</Type>
+              <Name>bnb_bound_premium</Name>
+              <LogicalName>bnb_bound_premium</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <Precision>2</Precision>
+              <LocalizedNames>
+                <LocalizedName description="Bound Premium" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <!-- SLA / Dates -->
+            <attribute PhysicalName="bnb_submission_date">
+              <Type>datetime</Type>
+              <Name>bnb_submission_date</Name>
+              <LogicalName>bnb_submission_date</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <Format>DateOnly</Format>
+              <LocalizedNames>
+                <LocalizedName description="Submission Date" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <attribute PhysicalName="bnb_sla_due_date">
+              <Type>datetime</Type>
+              <Name>bnb_sla_due_date</Name>
+              <LogicalName>bnb_sla_due_date</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <Format>DateOnly</Format>
+              <LocalizedNames>
+                <LocalizedName description="SLA Due Date" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <attribute PhysicalName="bnb_effective_date">
+              <Type>datetime</Type>
+              <Name>bnb_effective_date</Name>
+              <LogicalName>bnb_effective_date</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <Format>DateOnly</Format>
+              <LocalizedNames>
+                <LocalizedName description="Effective Date" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <attribute PhysicalName="bnb_days_open">
+              <Type>integer</Type>
+              <Name>bnb_days_open</Name>
+              <LogicalName>bnb_days_open</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Days Open" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <attribute PhysicalName="bnb_sla_breached">
+              <Type>bool</Type>
+              <Name>bnb_sla_breached</Name>
+              <LogicalName>bnb_sla_breached</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="SLA Breached?" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <!-- Win/Loss reason -->
+            <attribute PhysicalName="bnb_win_loss_reason">
+              <Type>nvarchar</Type>
+              <Name>bnb_win_loss_reason</Name>
+              <LogicalName>bnb_win_loss_reason</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <MaxLength>1000</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Win/Loss Reason" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <!-- Branch / Office -->
+            <attribute PhysicalName="bnb_branch_office">
+              <Type>nvarchar</Type>
+              <Name>bnb_branch_office</Name>
+              <LogicalName>bnb_branch_office</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <MaxLength>100</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Branch / Office" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <!-- Region -->
+            <attribute PhysicalName="bnb_region">
+              <Type>nvarchar</Type>
+              <Name>bnb_region</Name>
+              <LogicalName>bnb_region</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <MaxLength>100</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Region" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <!-- Competitor carriers quoted -->
+            <attribute PhysicalName="bnb_competitor_carriers">
+              <Type>nvarchar</Type>
+              <Name>bnb_competitor_carriers</Name>
+              <LogicalName>bnb_competitor_carriers</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <MaxLength>2000</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Competitor Carriers (comma-separated)" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+            <!-- Notes -->
+            <attribute PhysicalName="bnb_notes">
+              <Type>memo</Type>
+              <Name>bnb_notes</Name>
+              <LogicalName>bnb_notes</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <MaxLength>4000</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Notes" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+
+          </attributes>
+          <DisplayCollectionName>
+            <Titles><Title description="In-Flight Quotes" languagecode="1033"/></Titles>
+          </DisplayCollectionName>
+          <DisplayName>
+            <Titles><Title description="In-Flight Quote" languagecode="1033"/></Titles>
+          </DisplayName>
+          <EntitySetName>bnb_inflightquotes</EntitySetName>
+          <IsAuditEnabled>true</IsAuditEnabled>
+          <IsQuickCreateEnabled>true</IsQuickCreateEnabled>
+          <PrimaryNameAttribute>bnb_name</PrimaryNameAttribute>
+          <SchemaName>bnb_inflightquote</SchemaName>
+        </entity>
+      </EntityInfo>
+    </Entity>
+
+    <!-- ================================================================
+         bnb_quoteline  –  Individual carrier quote line per submission
+         ================================================================ -->
+    <Entity>
+      <Name LocalizedName="Quote Line" OriginalName="bnb_quoteline">bnb_quoteline</Name>
+      <EntityInfo>
+        <entity Name="bnb_quoteline">
+          <LocalizedNames>
+            <LocalizedName description="Quote Line" languagecode="1033"/>
+          </LocalizedNames>
+          <LocalizedCollectionNames>
+            <LocalizedCollectionName description="Quote Lines" languagecode="1033"/>
+          </LocalizedCollectionNames>
+          <attributes>
+            <attribute PhysicalName="bnb_quotelineid">
+              <Type>primarykey</Type>
+              <Name>bnb_quotelineid</Name>
+              <LogicalName>bnb_quotelineid</LogicalName>
+              <RequiredLevel>systemrequired</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Quote Line" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_name">
+              <Type>nvarchar</Type>
+              <Name>bnb_name</Name>
+              <LogicalName>bnb_name</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <MaxLength>200</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Line Name" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_parent_quote">
+              <Type>lookup</Type>
+              <Name>bnb_parent_quote</Name>
+              <LogicalName>bnb_parent_quote</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <targets>bnb_inflightquote</targets>
+              <LocalizedNames>
+                <LocalizedName description="Parent Quote" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_carrier_name">
+              <Type>nvarchar</Type>
+              <Name>bnb_carrier_name</Name>
+              <LogicalName>bnb_carrier_name</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <MaxLength>200</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Carrier" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_quoted_premium">
+              <Type>money</Type>
+              <Name>bnb_quoted_premium</Name>
+              <LogicalName>bnb_quoted_premium</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <Precision>2</Precision>
+              <LocalizedNames>
+                <LocalizedName description="Quoted Premium" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_coverage_limit">
+              <Type>money</Type>
+              <Name>bnb_coverage_limit</Name>
+              <LogicalName>bnb_coverage_limit</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <Precision>0</Precision>
+              <LocalizedNames>
+                <LocalizedName description="Coverage Limit" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_deductible">
+              <Type>money</Type>
+              <Name>bnb_deductible</Name>
+              <LogicalName>bnb_deductible</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <Precision>0</Precision>
+              <LocalizedNames>
+                <LocalizedName description="Deductible" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_is_selected">
+              <Type>bool</Type>
+              <Name>bnb_is_selected</Name>
+              <LogicalName>bnb_is_selected</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Selected / Bound?" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_coverage_notes">
+              <Type>nvarchar</Type>
+              <Name>bnb_coverage_notes</Name>
+              <LogicalName>bnb_coverage_notes</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <MaxLength>2000</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Coverage Notes / Exclusions" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+          </attributes>
+          <DisplayCollectionName>
+            <Titles><Title description="Quote Lines" languagecode="1033"/></Titles>
+          </DisplayCollectionName>
+          <DisplayName>
+            <Titles><Title description="Quote Line" languagecode="1033"/></Titles>
+          </DisplayName>
+          <EntitySetName>bnb_quotelines</EntitySetName>
+          <IsAuditEnabled>true</IsAuditEnabled>
+          <IsQuickCreateEnabled>true</IsQuickCreateEnabled>
+          <PrimaryNameAttribute>bnb_name</PrimaryNameAttribute>
+          <SchemaName>bnb_quoteline</SchemaName>
+        </entity>
+      </EntityInfo>
+    </Entity>
+
+    <!-- ================================================================
+         bnb_hitratio  –  Aggregated hit-ratio snapshot (refreshed daily)
+         ================================================================ -->
+    <Entity>
+      <Name LocalizedName="Hit Ratio Snapshot" OriginalName="bnb_hitratio">bnb_hitratio</Name>
+      <EntityInfo>
+        <entity Name="bnb_hitratio">
+          <LocalizedNames>
+            <LocalizedName description="Hit Ratio Snapshot" languagecode="1033"/>
+          </LocalizedNames>
+          <LocalizedCollectionNames>
+            <LocalizedCollectionName description="Hit Ratio Snapshots" languagecode="1033"/>
+          </LocalizedCollectionNames>
+          <attributes>
+            <attribute PhysicalName="bnb_hitratioid">
+              <Type>primarykey</Type>
+              <Name>bnb_hitratioid</Name>
+              <LogicalName>bnb_hitratioid</LogicalName>
+              <RequiredLevel>systemrequired</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Hit Ratio Snapshot" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_name">
+              <Type>nvarchar</Type>
+              <Name>bnb_name</Name>
+              <LogicalName>bnb_name</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <MaxLength>200</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Snapshot Name" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_period_start">
+              <Type>datetime</Type>
+              <Name>bnb_period_start</Name>
+              <LogicalName>bnb_period_start</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <Format>DateOnly</Format>
+              <LocalizedNames>
+                <LocalizedName description="Period Start" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_period_end">
+              <Type>datetime</Type>
+              <Name>bnb_period_end</Name>
+              <LogicalName>bnb_period_end</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <Format>DateOnly</Format>
+              <LocalizedNames>
+                <LocalizedName description="Period End" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_producer_name">
+              <Type>nvarchar</Type>
+              <Name>bnb_producer_name</Name>
+              <LogicalName>bnb_producer_name</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <MaxLength>200</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Producer" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_business_segment">
+              <Type>nvarchar</Type>
+              <Name>bnb_business_segment</Name>
+              <LogicalName>bnb_business_segment</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <MaxLength>100</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Business Segment" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_carrier_name">
+              <Type>nvarchar</Type>
+              <Name>bnb_carrier_name</Name>
+              <LogicalName>bnb_carrier_name</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <MaxLength>200</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Carrier" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_total_submissions">
+              <Type>integer</Type>
+              <Name>bnb_total_submissions</Name>
+              <LogicalName>bnb_total_submissions</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Total Submissions" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_total_bound">
+              <Type>integer</Type>
+              <Name>bnb_total_bound</Name>
+              <LogicalName>bnb_total_bound</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Total Bound" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_hit_ratio_pct">
+              <Type>decimal</Type>
+              <Name>bnb_hit_ratio_pct</Name>
+              <LogicalName>bnb_hit_ratio_pct</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <Precision>2</Precision>
+              <LocalizedNames>
+                <LocalizedName description="Hit Ratio (%)" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_total_premium_bound">
+              <Type>money</Type>
+              <Name>bnb_total_premium_bound</Name>
+              <LogicalName>bnb_total_premium_bound</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <Precision>2</Precision>
+              <LocalizedNames>
+                <LocalizedName description="Total Premium Bound" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+          </attributes>
+          <DisplayCollectionName>
+            <Titles><Title description="Hit Ratio Snapshots" languagecode="1033"/></Titles>
+          </DisplayCollectionName>
+          <DisplayName>
+            <Titles><Title description="Hit Ratio Snapshot" languagecode="1033"/></Titles>
+          </DisplayName>
+          <EntitySetName>bnb_hitratios</EntitySetName>
+          <IsAuditEnabled>true</IsAuditEnabled>
+          <IsQuickCreateEnabled>false</IsQuickCreateEnabled>
+          <PrimaryNameAttribute>bnb_name</PrimaryNameAttribute>
+          <SchemaName>bnb_hitratio</SchemaName>
+        </entity>
+      </EntityInfo>
+    </Entity>
+
+    <!-- ================================================================
+         bnb_sla_rule  –  Configurable SLA rules per segment
+         ================================================================ -->
+    <Entity>
+      <Name LocalizedName="SLA Rule" OriginalName="bnb_sla_rule">bnb_sla_rule</Name>
+      <EntityInfo>
+        <entity Name="bnb_sla_rule">
+          <LocalizedNames>
+            <LocalizedName description="SLA Rule" languagecode="1033"/>
+          </LocalizedNames>
+          <LocalizedCollectionNames>
+            <LocalizedCollectionName description="SLA Rules" languagecode="1033"/>
+          </LocalizedCollectionNames>
+          <attributes>
+            <attribute PhysicalName="bnb_sla_ruleid">
+              <Type>primarykey</Type>
+              <Name>bnb_sla_ruleid</Name>
+              <LogicalName>bnb_sla_ruleid</LogicalName>
+              <RequiredLevel>systemrequired</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="SLA Rule" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_name">
+              <Type>nvarchar</Type>
+              <Name>bnb_name</Name>
+              <LogicalName>bnb_name</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <MaxLength>200</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Rule Name" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_segment">
+              <Type>nvarchar</Type>
+              <Name>bnb_segment</Name>
+              <LogicalName>bnb_segment</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <MaxLength>100</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Business Segment" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_response_sla_days">
+              <Type>integer</Type>
+              <Name>bnb_response_sla_days</Name>
+              <LogicalName>bnb_response_sla_days</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Response SLA (Business Days)" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_stalled_threshold_days">
+              <Type>integer</Type>
+              <Name>bnb_stalled_threshold_days</Name>
+              <LogicalName>bnb_stalled_threshold_days</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Stalled Alert Threshold (Days)" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+            <attribute PhysicalName="bnb_escalation_email">
+              <Type>nvarchar</Type>
+              <Name>bnb_escalation_email</Name>
+              <LogicalName>bnb_escalation_email</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <MaxLength>500</MaxLength>
+              <LocalizedNames>
+                <LocalizedName description="Escalation Email(s)" languagecode="1033"/>
+              </LocalizedNames>
+            </attribute>
+          </attributes>
+          <DisplayCollectionName>
+            <Titles><Title description="SLA Rules" languagecode="1033"/></Titles>
+          </DisplayCollectionName>
+          <DisplayName>
+            <Titles><Title description="SLA Rule" languagecode="1033"/></Titles>
+          </DisplayName>
+          <EntitySetName>bnb_sla_rules</EntitySetName>
+          <IsAuditEnabled>false</IsAuditEnabled>
+          <IsQuickCreateEnabled>true</IsQuickCreateEnabled>
+          <PrimaryNameAttribute>bnb_name</PrimaryNameAttribute>
+          <SchemaName>bnb_sla_rule</SchemaName>
+        </entity>
+      </EntityInfo>
+    </Entity>
+
+  </Entities>
+</ImportExportXml>

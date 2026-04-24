@@ -1,0 +1,130 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "_comment": "Brown & Brown Insurance – SLA Breach Alert Flow (Power Automate)",
+  "_description": "Runs daily at 6:00 AM ET. Queries bnb_inflightquote for records where bnb_sla_due_date < today and status is not Bound/Lost/Expired. Sets sla_breached = true and sends email + Teams alert to producer and sales leader.",
+  "_import_instructions": [
+    "1. In Power Automate, click 'Import' and upload this JSON.",
+    "2. Authenticate the 'Dataverse' and 'Office 365 Outlook' connections.",
+    "3. Update the 'SALES_LEADER_EMAIL' and 'TEAMS_WEBHOOK_URL' variables.",
+    "4. Turn the flow ON."
+  ],
+
+  "name": "BnB_SLA_Breach_Alert",
+  "displayName": "BnB – SLA Breach Alert (Daily)",
+  "triggers": {
+    "Recurrence": {
+      "type": "Recurrence",
+      "recurrence": {
+        "frequency": "Day",
+        "interval": 1,
+        "startTime": "2026-01-01T10:00:00Z",
+        "timeZone": "Eastern Standard Time"
+      }
+    }
+  },
+  "variables": {
+    "SALES_LEADER_EMAIL":   { "value": "sales-leaders@bbins.com" },
+    "EB_LEADER_EMAIL":      { "value": "eb-leaders@bbins.com" },
+    "TEAMS_WEBHOOK_URL":    { "value": "https://prod-xx.eastus.logic.azure.com/workflows/REPLACE_ME/triggers/manual/paths/invoke" },
+    "TODAY":                { "value": "@{utcNow('yyyy-MM-dd')}" },
+    "BREACH_COUNT":         { "value": 0 }
+  },
+  "actions": {
+    "Get_Open_Quotes_Past_SLA": {
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": { "connectionName": "shared_commondataserviceforapps", "operationId": "ListRecords" },
+        "parameters": {
+          "entityName": "bnb_inflightquotes",
+          "$filter": "bnb_sla_due_date lt @{variables('TODAY')} and bnb_quote_status ne 200000004 and bnb_quote_status ne 200000005 and bnb_quote_status ne 200000006 and bnb_sla_breached eq false",
+          "$select": "bnb_name,bnb_account_name,bnb_producer_name,bnb_carrier_name,bnb_business_segment,bnb_sla_due_date,bnb_days_open,bnb_quote_status,bnb_branch_office"
+        }
+      }
+    },
+    "For_Each_Breached_Quote": {
+      "type": "Foreach",
+      "foreach": "@outputs('Get_Open_Quotes_Past_SLA')?['body/value']",
+      "actions": {
+        "Mark_SLA_Breached": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": { "connectionName": "shared_commondataserviceforapps", "operationId": "UpdateRecord" },
+            "parameters": {
+              "entityName": "bnb_inflightquotes",
+              "recordId": "@items('For_Each_Breached_Quote')?['bnb_inflightquoteid']",
+              "item/bnb_sla_breached": true,
+              "item/bnb_quote_status": 200000007
+            }
+          }
+        },
+        "Send_Producer_Email": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": { "connectionName": "shared_office365", "operationId": "SendEmailV2" },
+            "parameters": {
+              "emailMessage": {
+                "To": "@{items('For_Each_Breached_Quote')?['bnb_produceremail']}",
+                "CC": "@{variables('SALES_LEADER_EMAIL')}",
+                "Subject": "⚠️ SLA BREACH – @{items('For_Each_Breached_Quote')?['bnb_account_name']} (@{items('For_Each_Breached_Quote')?['bnb_name']})",
+                "Body": "<html><body style='font-family:Segoe UI,Arial;'><div style='background:#002D62;color:white;padding:16px;border-radius:8px 8px 0 0'><h2 style='margin:0'>🚨 SLA Breach Alert</h2><p style='margin:4px 0 0'>Brown &amp; Brown Insurance – In-Flight Quotes</p></div><div style='padding:16px;border:1px solid #ddd;border-radius:0 0 8px 8px'><p>The following quote has exceeded its SLA response deadline:</p><table style='border-collapse:collapse;width:100%'><tr><td style='padding:6px;font-weight:bold;color:#555'>Quote #</td><td style='padding:6px'>@{items('For_Each_Breached_Quote')?['bnb_name']}</td></tr><tr style='background:#f9f9f9'><td style='padding:6px;font-weight:bold;color:#555'>Account</td><td style='padding:6px'>@{items('For_Each_Breached_Quote')?['bnb_account_name']}</td></tr><tr><td style='padding:6px;font-weight:bold;color:#555'>Carrier</td><td style='padding:6px'>@{items('For_Each_Breached_Quote')?['bnb_carrier_name']}</td></tr><tr style='background:#f9f9f9'><td style='padding:6px;font-weight:bold;color:#555'>SLA Due Date</td><td style='padding:6px;color:#C0392B;font-weight:bold'>@{items('For_Each_Breached_Quote')?['bnb_sla_due_date']}</td></tr><tr><td style='padding:6px;font-weight:bold;color:#555'>Days Open</td><td style='padding:6px'>@{items('For_Each_Breached_Quote')?['bnb_days_open']}</td></tr></table><p style='margin-top:16px'><a href='https://YOUR_ORG.crm.dynamics.com/main.aspx?etn=bnb_inflightquote&id=@{items(''For_Each_Breached_Quote'')?[''bnb_inflightquoteid'']}' style='background:#0057B8;color:white;padding:8px 16px;border-radius:4px;text-decoration:none'>Open in Dynamics 365 →</a></p><p style='font-size:11px;color:#888;margin-top:16px'>This alert was generated by the In-Flight Quotes Workspace automation. To adjust SLA thresholds, update the bnb_sla_rule table.</p></div></body></html>",
+                "IsHtml": true,
+                "Importance": "High"
+              }
+            }
+          }
+        },
+        "Post_Teams_Alert": {
+          "type": "Http",
+          "inputs": {
+            "method": "POST",
+            "uri": "@{variables('TEAMS_WEBHOOK_URL')}",
+            "headers": { "Content-Type": "application/json" },
+            "body": {
+              "@type": "MessageCard",
+              "@context": "http://schema.org/extensions",
+              "themeColor": "C0392B",
+              "summary": "SLA Breach",
+              "sections": [{
+                "activityTitle": "🚨 SLA Breach – @{items('For_Each_Breached_Quote')?['bnb_account_name']}",
+                "activitySubtitle": "@{items('For_Each_Breached_Quote')?['bnb_name']} · @{items('For_Each_Breached_Quote')?['bnb_carrier_name']}",
+                "facts": [
+                  { "name": "Producer",    "value": "@{items('For_Each_Breached_Quote')?['bnb_producer_name']}" },
+                  { "name": "Days Open",   "value": "@{items('For_Each_Breached_Quote')?['bnb_days_open']}" },
+                  { "name": "SLA Due",     "value": "@{items('For_Each_Breached_Quote')?['bnb_sla_due_date']}" },
+                  { "name": "Office",      "value": "@{items('For_Each_Breached_Quote')?['bnb_branch_office']}" }
+                ]
+              }],
+              "potentialAction": [{
+                "@type": "OpenUri",
+                "name": "Open in Dynamics",
+                "targets": [{ "os": "default", "uri": "https://YOUR_ORG.crm.dynamics.com" }]
+              }]
+            }
+          }
+        }
+      }
+    },
+    "Update_Breach_Count": {
+      "type": "SetVariable",
+      "inputs": {
+        "name": "BREACH_COUNT",
+        "value": "@length(outputs('Get_Open_Quotes_Past_SLA')?['body/value'])"
+      }
+    },
+    "Summary_Email_To_Leadership": {
+      "type": "OpenApiConnection",
+      "runAfter": { "For_Each_Breached_Quote": ["Succeeded"] },
+      "inputs": {
+        "host": { "connectionName": "shared_office365", "operationId": "SendEmailV2" },
+        "parameters": {
+          "emailMessage": {
+            "To": "@{variables('SALES_LEADER_EMAIL')}",
+            "Subject": "📊 Daily SLA Summary – @{variables('BREACH_COUNT')} New Breaches – @{formatDateTime(utcNow(), 'MMMM d, yyyy')}",
+            "Body": "<html><body style='font-family:Segoe UI,Arial;'><p>Good morning,</p><p>The In-Flight Quotes SLA engine ran today and identified <strong>@{variables('BREACH_COUNT')} new SLA breach(es)</strong>.</p><p>Please review the In-Flight Quotes Workspace in Dynamics 365 for full details and action items.</p><p><a href='https://YOUR_ORG.crm.dynamics.com'>Open In-Flight Quotes Workspace →</a></p><p style='font-size:11px;color:#888'>Brown &amp; Brown Insurance | In-Flight Quotes Automation</p></body></html>",
+            "IsHtml": true
+          }
+        }
+      }
+    }
+  }
+}

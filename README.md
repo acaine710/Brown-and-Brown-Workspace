@@ -1,73 +1,32 @@
-# React + TypeScript + Vite
+# Brown & Brown Insurance – In-Flight Quotes Workspace (Dynamics 365)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A production-ready Microsoft Dynamics 365 solution that gives Brown & Brown Insurance producers a **single pane of glass** for every open quote across all carriers and business segments.
 
-Currently, two official plugins are available:
+## What's Inside
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| Folder | Contents |
+|---|---|
+| `dynamics-solution/` | Complete Dynamics 365 solution package |
+| `dynamics-solution/Entities/` | 5 Dataverse table definitions (quotes, carriers, hit ratios, SLA rules, quote lines) |
+| `dynamics-solution/WebResources/` | Full HTML/JS/CSS workspace UI + fake B&B sample data (60 quotes, 15 producers, 12 carriers) |
+| `dynamics-solution/Workflows/` | 3 Power Automate flow templates (SLA alerts, stalled detection, monthly hit-ratio snapshots) |
 
-## React Compiler
+## Quick Start
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# Preview standalone (no Dynamics required – uses sample data)
+cd dynamics-solution/WebResources
+npx serve .
+# Open http://localhost:3000/bnb_inflight_quotes_main.html
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+See [`dynamics-solution/README.md`](dynamics-solution/README.md) for full deployment instructions.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Features
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- 📊 **Dashboard** – KPI cards, segment/status charts, longest-open quotes
+- 📋 **Quote Grid** – All open quotes filterable by segment, carrier, producer, region, SLA status
+- 🚨 **Alerts & SLA** – Color-coded SLA timers, stalled alerts, escalation buttons
+- 📈 **Hit Ratio Analytics** – Trend charts, by-segment/producer/carrier breakdown, Q2 forecast
+- ⚖️ **Competitive Analysis** – Carrier scorecard, win/loss rates, appetite map
+- 🤖 **AI Extension Points** – Copilot Studio, Azure OpenAI, ML forecast hooks documented

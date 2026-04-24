@@ -1,0 +1,129 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "_comment": "Brown & Brown Insurance – Stalled Quote Alert Flow (Power Automate)",
+  "_description": "Runs every business day at 7:00 AM ET. Detects quotes with no CRM activity for X days (per segment SLA rule) and marks them 'Stalled', then alerts the producer and their Sales Leader.",
+
+  "name": "BnB_Stalled_Quote_Alert",
+  "displayName": "BnB – Stalled Quote Detection (Daily)",
+  "triggers": {
+    "Recurrence": {
+      "type": "Recurrence",
+      "recurrence": {
+        "frequency": "Week",
+        "interval": 1,
+        "schedule": { "weekDays": ["Monday","Tuesday","Wednesday","Thursday","Friday"] },
+        "startTime": "2026-01-01T11:00:00Z",
+        "timeZone": "Eastern Standard Time"
+      }
+    }
+  },
+  "variables": {
+    "PERSONAL_LINES_STALLED_DAYS":    { "value": 10 },
+    "SMALL_COMM_STALLED_DAYS":        { "value": 14 },
+    "MID_MARKET_STALLED_DAYS":        { "value": 21 },
+    "LARGE_COMM_STALLED_DAYS":        { "value": 30 },
+    "EMP_BENEFITS_STALLED_DAYS":      { "value": 21 },
+    "DEALER_SERVICES_STALLED_DAYS":   { "value": 14 },
+    "SURETY_STALLED_DAYS":            { "value": 21 }
+  },
+  "actions": {
+    "Get_All_Open_Quotes": {
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": { "connectionName": "shared_commondataserviceforapps", "operationId": "ListRecords" },
+        "parameters": {
+          "entityName": "bnb_inflightquotes",
+          "$filter": "bnb_quote_status ne 200000004 and bnb_quote_status ne 200000005 and bnb_quote_status ne 200000006 and bnb_quote_status ne 200000007",
+          "$select": "bnb_name,bnb_account_name,bnb_producer_name,bnb_produceremail,bnb_carrier_name,bnb_business_segment,bnb_days_open,bnb_sla_due_date,bnb_branch_office,bnb_modifiedon",
+          "$orderby": "bnb_days_open desc",
+          "$top": 500
+        }
+      }
+    },
+    "Filter_Personal_Lines_Stalled": {
+      "type": "Query",
+      "inputs": {
+        "from": "@outputs('Get_All_Open_Quotes')?['body/value']",
+        "where": "@and(equals(item()?['bnb_business_segment'], 100000000), greaterOrEquals(item()?['bnb_days_open'], variables('PERSONAL_LINES_STALLED_DAYS')))"
+      }
+    },
+    "Filter_Small_Comm_Stalled": {
+      "type": "Query",
+      "inputs": {
+        "from": "@outputs('Get_All_Open_Quotes')?['body/value']",
+        "where": "@and(equals(item()?['bnb_business_segment'], 100000001), greaterOrEquals(item()?['bnb_days_open'], variables('SMALL_COMM_STALLED_DAYS')))"
+      }
+    },
+    "Filter_Mid_Market_Stalled": {
+      "type": "Query",
+      "inputs": {
+        "from": "@outputs('Get_All_Open_Quotes')?['body/value']",
+        "where": "@and(equals(item()?['bnb_business_segment'], 100000002), greaterOrEquals(item()?['bnb_days_open'], variables('MID_MARKET_STALLED_DAYS')))"
+      }
+    },
+    "Filter_Large_Comm_Stalled": {
+      "type": "Query",
+      "inputs": {
+        "from": "@outputs('Get_All_Open_Quotes')?['body/value']",
+        "where": "@and(equals(item()?['bnb_business_segment'], 100000003), greaterOrEquals(item()?['bnb_days_open'], variables('LARGE_COMM_STALLED_DAYS')))"
+      }
+    },
+    "Filter_EB_Stalled": {
+      "type": "Query",
+      "inputs": {
+        "from": "@outputs('Get_All_Open_Quotes')?['body/value']",
+        "where": "@and(equals(item()?['bnb_business_segment'], 100000004), greaterOrEquals(item()?['bnb_days_open'], variables('EMP_BENEFITS_STALLED_DAYS')))"
+      }
+    },
+    "Filter_Dealer_Stalled": {
+      "type": "Query",
+      "inputs": {
+        "from": "@outputs('Get_All_Open_Quotes')?['body/value']",
+        "where": "@and(equals(item()?['bnb_business_segment'], 100000005), greaterOrEquals(item()?['bnb_days_open'], variables('DEALER_SERVICES_STALLED_DAYS')))"
+      }
+    },
+    "Filter_Surety_Stalled": {
+      "type": "Query",
+      "inputs": {
+        "from": "@outputs('Get_All_Open_Quotes')?['body/value']",
+        "where": "@and(equals(item()?['bnb_business_segment'], 100000006), greaterOrEquals(item()?['bnb_days_open'], variables('SURETY_STALLED_DAYS')))"
+      }
+    },
+    "Combine_All_Stalled": {
+      "type": "Compose",
+      "inputs": "@union(outputs('Filter_Personal_Lines_Stalled'),outputs('Filter_Small_Comm_Stalled'),outputs('Filter_Mid_Market_Stalled'),outputs('Filter_Large_Comm_Stalled'),outputs('Filter_EB_Stalled'),outputs('Filter_Dealer_Stalled'),outputs('Filter_Surety_Stalled'))"
+    },
+    "For_Each_Stalled_Quote": {
+      "type": "Foreach",
+      "foreach": "@outputs('Combine_All_Stalled')",
+      "actions": {
+        "Mark_As_Stalled": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": { "connectionName": "shared_commondataserviceforapps", "operationId": "UpdateRecord" },
+            "parameters": {
+              "entityName": "bnb_inflightquotes",
+              "recordId": "@items('For_Each_Stalled_Quote')?['bnb_inflightquoteid']",
+              "item/bnb_quote_status": 200000007
+            }
+          }
+        },
+        "Email_Producer_Stalled": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": { "connectionName": "shared_office365", "operationId": "SendEmailV2" },
+            "parameters": {
+              "emailMessage": {
+                "To": "@{items('For_Each_Stalled_Quote')?['bnb_produceremail']}",
+                "Subject": "⏸️ Stalled Quote Action Required – @{items('For_Each_Stalled_Quote')?['bnb_account_name']}",
+                "Body": "<html><body style='font-family:Segoe UI,Arial;'><div style='background:#E67E22;color:white;padding:16px;border-radius:8px 8px 0 0'><h2 style='margin:0'>⏸️ Stalled Quote Alert</h2></div><div style='padding:16px;border:1px solid #ddd;border-radius:0 0 8px 8px'><p>Hi @{items('For_Each_Stalled_Quote')?['bnb_producer_name']},</p><p>The following quote has been open for <strong>@{items('For_Each_Stalled_Quote')?['bnb_days_open']} days</strong> with no recent activity and has been flagged as <strong>Stalled</strong>:</p><table style='border-collapse:collapse;width:100%'><tr><td style='padding:6px;font-weight:bold;color:#555'>Quote #</td><td>@{items('For_Each_Stalled_Quote')?['bnb_name']}</td></tr><tr style='background:#f9f9f9'><td style='padding:6px;font-weight:bold;color:#555'>Account</td><td>@{items('For_Each_Stalled_Quote')?['bnb_account_name']}</td></tr><tr><td style='padding:6px;font-weight:bold;color:#555'>Carrier</td><td>@{items('For_Each_Stalled_Quote')?['bnb_carrier_name']}</td></tr><tr style='background:#f9f9f9'><td style='padding:6px;font-weight:bold;color:#555'>Days Open</td><td style='color:#E67E22;font-weight:bold'>@{items('For_Each_Stalled_Quote')?['bnb_days_open']}</td></tr></table><p style='margin-top:16px'><strong>Action required:</strong> Please contact the client or update the quote status in Dynamics 365 within 48 hours to prevent further escalation.</p><p><a href='https://YOUR_ORG.crm.dynamics.com' style='background:#0057B8;color:white;padding:8px 16px;border-radius:4px;text-decoration:none'>Open Quote →</a></p></div></body></html>",
+                "IsHtml": true,
+                "Importance": "High"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
