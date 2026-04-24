@@ -51,21 +51,21 @@ interface Props {
 export default function FilterBar({ filters, onChange }: Props) {
   const set = (partial: Partial<FilterState>) => onChange({ ...filters, ...partial });
 
-  const selectCls = "text-sm border border-[#EDEBE9] rounded px-2 py-1.5 bg-white text-[#323130] focus:outline-none focus:ring-2 focus:ring-[#0078D4]/40";
+  const selectCls = "text-sm border border-[#D0DAE8] rounded px-2 py-1.5 bg-white text-[#1A2B3C] focus:outline-none focus:ring-2 focus:ring-[#0078D4]/40";
 
   return (
-    <div className="bg-white border border-[#EDEBE9] rounded-lg p-4 flex flex-wrap gap-3 items-center shadow-sm">
-      <SlidersHorizontal size={16} className="text-[#A19F9D] shrink-0" />
+    <div className="bg-white border border-[#D0DAE8] rounded-lg p-4 flex flex-wrap gap-3 items-center shadow-sm">
+      <SlidersHorizontal size={16} className="text-[#7A95AB] shrink-0" />
 
       {/* Search */}
       <div className="relative flex-1 min-w-[180px]">
-        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A19F9D]" />
+        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7A95AB]" />
         <input
           type="text"
           placeholder="Search insured, ID, producer…"
           value={filters.searchTerm}
           onChange={(e) => set({ searchTerm: e.target.value })}
-          className={`pl-8 pr-3 py-1.5 text-sm border border-[#EDEBE9] rounded w-full bg-white text-[#323130] placeholder-[#A19F9D] focus:outline-none focus:ring-2 focus:ring-[#0078D4]/40`}
+          className={`pl-8 pr-3 py-1.5 text-sm border border-[#D0DAE8] rounded w-full bg-white text-[#1A2B3C] placeholder-[#7A95AB] focus:outline-none focus:ring-2 focus:ring-[#0078D4]/40`}
         />
       </div>
 

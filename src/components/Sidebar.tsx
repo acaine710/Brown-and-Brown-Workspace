@@ -2,12 +2,13 @@ import {
   BarChart2,
   Bell,
   BookOpen,
+  Bot,
   Home,
   LayoutGrid,
   Layers,
 } from 'lucide-react';
 
-type Tab = 'dashboard' | 'pipeline' | 'analytics' | 'alerts' | 'carriers';
+type Tab = 'dashboard' | 'pipeline' | 'analytics' | 'alerts' | 'carriers' | 'ai';
 
 interface Props {
   activeTab: Tab;
@@ -21,18 +22,19 @@ const NAV_ITEMS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: 'alerts', label: 'Alerts', icon: <Bell size={18} /> },
   { id: 'analytics', label: 'Analytics', icon: <BarChart2 size={18} /> },
   { id: 'carriers', label: 'Carriers', icon: <BookOpen size={18} /> },
+  { id: 'ai', label: 'AI Assistant', icon: <Bot size={18} /> },
 ];
 
 export default function Sidebar({ activeTab, onChange, alertCount }: Props) {
   return (
-    <aside className="w-56 shrink-0 bg-white border-r border-[#EDEBE9] flex flex-col shadow-sm">
+    <aside className="w-56 shrink-0 bg-[#0C2340] flex flex-col shadow-lg">
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-[#EDEBE9]">
+      <div className="px-5 py-5 border-b border-[#153658]">
         <div className="flex items-center gap-2">
-          <LayoutGrid size={22} className="text-[#0078D4]" />
+          <LayoutGrid size={22} className="text-[#4A9EDF]" />
           <div>
-            <div className="font-bold text-sm leading-tight text-[#323130]">Brown & Brown</div>
-            <div className="text-xs text-[#0078D4]">In-Flight Quotes</div>
+            <div className="font-bold text-sm leading-tight text-white">Brown & Brown</div>
+            <div className="text-xs text-[#4A9EDF]">In-Flight Quotes</div>
           </div>
         </div>
       </div>
@@ -47,8 +49,8 @@ export default function Sidebar({ activeTab, onChange, alertCount }: Props) {
               onClick={() => onChange(item.id)}
               className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-[#EFF6FC] text-[#0078D4] border-l-2 border-[#0078D4] rounded-r-md'
-                  : 'text-[#605E5C] hover:bg-[#F3F2F1] hover:text-[#323130] rounded-md'
+                  ? 'bg-[#174F8F] text-white border-l-2 border-[#4A9EDF] rounded-r-md'
+                  : 'text-[#8AAECC] hover:bg-[#153658] hover:text-white rounded-md'
               }`}
             >
               {item.icon}
@@ -64,7 +66,7 @@ export default function Sidebar({ activeTab, onChange, alertCount }: Props) {
       </nav>
 
       {/* Footer */}
-      <div className="px-5 py-4 border-t border-[#EDEBE9] text-xs text-[#A19F9D]">
+      <div className="px-5 py-4 border-t border-[#153658] text-xs text-[#5B81A6]">
         <div>B&B Insurance</div>
         <div>Demo · April 2025</div>
       </div>

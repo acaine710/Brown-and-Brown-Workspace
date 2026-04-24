@@ -42,15 +42,15 @@ export default function StatsBar({ stats }: Props) {
       label: 'Pipeline Value',
       value: formatCurrency(stats.estimatedPremiumInFlight),
       icon: <DollarSign size={18} />,
-      accent: '#107C10',
-      textColor: 'text-[#107C10]',
+      accent: '#2B6CB0',
+      textColor: 'text-[#2B6CB0]',
     },
     {
       label: 'Hit Ratio (YTD)',
       value: `${stats.overallHitRatio}%`,
       icon: <Target size={18} />,
-      accent: '#8764B8',
-      textColor: 'text-[#8764B8]',
+      accent: '#005A9E',
+      textColor: 'text-[#005A9E]',
     },
     {
       label: 'Avg Response Time',
@@ -66,7 +66,7 @@ export default function StatsBar({ stats }: Props) {
       {cards.map((c) => (
         <div
           key={c.label}
-          className="bg-white border border-[#EDEBE9] rounded-lg overflow-hidden flex flex-col shadow-sm"
+          className="bg-white border border-[#D0DAE8] rounded-lg overflow-hidden flex flex-col shadow-sm"
         >
           {/* Microsoft KPI accent bar at top */}
           <div style={{ height: '3px', backgroundColor: c.accent }} />
@@ -76,7 +76,7 @@ export default function StatsBar({ stats }: Props) {
               {c.label}
             </div>
             <div className={`text-2xl font-bold ${c.textColor}`}>{c.value}</div>
-            {c.sub && <div className="text-xs text-[#A19F9D]">{c.sub}</div>}
+            {c.sub && <div className="text-xs text-[#7A95AB]">{c.sub}</div>}
           </div>
         </div>
       ))}

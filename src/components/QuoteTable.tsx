@@ -17,7 +17,7 @@ interface Props {
 export default function QuoteTable({ quotes, onSelect }: Props) {
   if (quotes.length === 0) {
     return (
-      <div className="bg-white border border-[#EDEBE9] rounded-lg p-12 text-center text-[#A19F9D]">
+      <div className="bg-white border border-[#D0DAE8] rounded-lg p-12 text-center text-[#7A95AB]">
         <FileText size={40} className="mx-auto mb-3 opacity-40" />
         <p className="text-lg font-medium">No quotes match your filters.</p>
       </div>
@@ -25,10 +25,10 @@ export default function QuoteTable({ quotes, onSelect }: Props) {
   }
 
   return (
-    <div className="bg-white border border-[#EDEBE9] rounded-lg shadow-sm overflow-hidden">
+    <div className="bg-white border border-[#D0DAE8] rounded-lg shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-[#F3F2F1] border-b border-[#EDEBE9]">
+          <thead className="bg-[#EBF0F8] border-b border-[#D0DAE8]">
             <tr>
               {[
                 'Quote ID',
@@ -45,14 +45,14 @@ export default function QuoteTable({ quotes, onSelect }: Props) {
               ].map((h) => (
                 <th
                   key={h}
-                  className="px-4 py-3 text-left text-xs font-semibold text-[#A19F9D] uppercase tracking-wide whitespace-nowrap"
+                  className="px-4 py-3 text-left text-xs font-semibold text-[#7A95AB] uppercase tracking-wide whitespace-nowrap"
                 >
                   {h}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#F3F2F1]">
+          <tbody className="divide-y divide-[#EBF0F8]">
             {quotes.map((q) => {
               const slaDays = getDaysUntilSla(q.slaDeadline);
               const slaColor = getSlaColor(slaDays);
@@ -60,20 +60,20 @@ export default function QuoteTable({ quotes, onSelect }: Props) {
                 <tr
                   key={q.id}
                   onClick={() => onSelect(q)}
-                  className={`cursor-pointer hover:bg-[#EFF6FC] transition-colors ${
+                  className={`cursor-pointer hover:bg-[#EDF5FF] transition-colors ${
                     q.isStalled ? 'bg-[#FDE7E9]/30' : ''
                   }`}
                 >
-                  <td className="px-4 py-3 font-mono text-xs text-[#A19F9D]">{q.id}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-[#7A95AB]">{q.id}</td>
                   <td className="px-4 py-3">
-                    <div className="font-medium text-[#323130] whitespace-nowrap">{q.insuredName}</div>
+                    <div className="font-medium text-[#1A2B3C] whitespace-nowrap">{q.insuredName}</div>
                     {q.industry && (
-                      <div className="text-xs text-[#A19F9D]">{q.industry}</div>
+                      <div className="text-xs text-[#7A95AB]">{q.industry}</div>
                     )}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     <span className="text-base mr-1">{getBusinessLineIcon(q.businessLine)}</span>
-                    <span className="text-[#605E5C]">{q.businessLine}</span>
+                    <span className="text-[#4A5E70]">{q.businessLine}</span>
                   </td>
                   <td className="px-4 py-3">
                     <span
@@ -90,11 +90,11 @@ export default function QuoteTable({ quotes, onSelect }: Props) {
                       {q.priority}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-[#605E5C] whitespace-nowrap">{q.producer}</td>
-                  <td className="px-4 py-3 font-semibold text-[#323130] whitespace-nowrap">
+                  <td className="px-4 py-3 text-[#4A5E70] whitespace-nowrap">{q.producer}</td>
+                  <td className="px-4 py-3 font-semibold text-[#1A2B3C] whitespace-nowrap">
                     {formatCurrency(q.estimatedPremium)}
                   </td>
-                  <td className="px-4 py-3 text-[#605E5C]">{q.carriers.length} / quoted</td>
+                  <td className="px-4 py-3 text-[#4A5E70]">{q.carriers.length} / quoted</td>
                   <td className="px-4 py-3">
                     <span
                       className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${slaColor}`}
@@ -115,7 +115,7 @@ export default function QuoteTable({ quotes, onSelect }: Props) {
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-[#C8C6C4]">
+                  <td className="px-4 py-3 text-[#B0C4D4]">
                     <ChevronRight size={16} />
                   </td>
                 </tr>

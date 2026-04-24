@@ -20,13 +20,13 @@ function CoverageBar({ score }: { score: number }) {
     score >= 90 ? 'bg-[#107C10]' : score >= 75 ? 'bg-[#0078D4]' : 'bg-[#CA5010]';
   return (
     <div className="flex items-center gap-2">
-      <div className="flex-1 bg-[#F3F2F1] rounded-full h-2">
+      <div className="flex-1 bg-[#EBF0F8] rounded-full h-2">
         <div
           className={`h-2 rounded-full ${color}`}
           style={{ width: `${score}%` }}
         />
       </div>
-      <span className="text-xs font-semibold text-[#605E5C] w-7 text-right">{score}</span>
+      <span className="text-xs font-semibold text-[#4A5E70] w-7 text-right">{score}</span>
     </div>
   );
 }
@@ -51,14 +51,14 @@ export default function QuoteDetailPanel({ quote, onClose, onUpdateStatus }: Pro
       />
       <div className="w-full max-w-2xl bg-white shadow-2xl overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-[#EDEBE9] px-6 py-4 flex items-start justify-between z-10">
+        <div className="sticky top-0 bg-white border-b border-[#D0DAE8] px-6 py-4 flex items-start justify-between z-10">
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xl">{getBusinessLineIcon(quote.businessLine)}</span>
-              <h2 className="text-lg font-semibold text-[#323130]">{quote.insuredName}</h2>
+              <h2 className="text-lg font-semibold text-[#1A2B3C]">{quote.insuredName}</h2>
             </div>
             <div className="flex items-center gap-2 mt-1">
-              <span className="font-mono text-xs text-[#A19F9D]">{quote.id}</span>
+              <span className="font-mono text-xs text-[#7A95AB]">{quote.id}</span>
               <span
                 className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${getStatusColor(
                   quote.status
@@ -73,7 +73,7 @@ export default function QuoteDetailPanel({ quote, onClose, onUpdateStatus }: Pro
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded hover:bg-[#F3F2F1] text-[#605E5C]"
+            className="p-1.5 rounded hover:bg-[#EBF0F8] text-[#4A5E70]"
           >
             <X size={20} />
           </button>
@@ -126,11 +126,11 @@ export default function QuoteDetailPanel({ quote, onClose, onUpdateStatus }: Pro
 
           {/* Carrier Comparison */}
           <div>
-            <h3 className="font-semibold text-[#323130] mb-3">
+            <h3 className="font-semibold text-[#1A2B3C] mb-3">
               Carrier Quotes ({quote.carriers.length})
             </h3>
             {quote.carriers.length === 0 ? (
-              <div className="text-sm text-[#A19F9D] italic">
+              <div className="text-sm text-[#7A95AB] italic">
                 No carrier responses yet. Submission pending.
               </div>
             ) : (
@@ -144,47 +144,47 @@ export default function QuoteDetailPanel({ quote, onClose, onUpdateStatus }: Pro
                       <div
                         key={c.carrierId}
                         className={`rounded-lg border p-4 ${
-                          isBest ? 'border-[#92C353] bg-[#DFF6DD]' : 'border-[#EDEBE9] bg-[#FAF9F8]'
+                          isBest ? 'border-[#92C353] bg-[#DFF6DD]' : 'border-[#D0DAE8] bg-[#F4F7FA]'
                         }`}
                       >
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold text-[#323130]">{c.carrierName}</span>
+                            <span className="font-semibold text-[#1A2B3C]">{c.carrierName}</span>
                             {isBest && (
                               <span className="text-xs bg-[#92C353]/30 text-[#107C10] px-1.5 py-0.5 rounded font-medium">
                                 Best Coverage
                               </span>
                             )}
                             {isCheapest && (
-                              <span className="text-xs bg-[#EFF6FC] text-[#0078D4] px-1.5 py-0.5 rounded font-medium">
+                              <span className="text-xs bg-[#EDF5FF] text-[#0078D4] px-1.5 py-0.5 rounded font-medium">
                                 Lowest Premium
                               </span>
                             )}
                           </div>
-                          <span className="text-lg font-bold text-[#323130]">
+                          <span className="text-lg font-bold text-[#1A2B3C]">
                             {formatCurrency(c.premium)}
                           </span>
                         </div>
-                        <div className="grid grid-cols-3 gap-3 text-xs text-[#605E5C] mb-2">
+                        <div className="grid grid-cols-3 gap-3 text-xs text-[#4A5E70] mb-2">
                           <div>
-                            <div className="font-medium text-[#323130]">Deductible</div>
+                            <div className="font-medium text-[#1A2B3C]">Deductible</div>
                             <div>{formatCurrency(c.deductible)}</div>
                           </div>
                           <div>
-                            <div className="font-medium text-[#323130]">Limit</div>
+                            <div className="font-medium text-[#1A2B3C]">Limit</div>
                             <div>{formatCurrency(c.limit)}</div>
                           </div>
                           <div>
-                            <div className="font-medium text-[#323130]">Response</div>
+                            <div className="font-medium text-[#1A2B3C]">Response</div>
                             <div>{c.responseDate ?? 'Pending'}</div>
                           </div>
                         </div>
                         <div>
-                          <div className="text-xs text-[#A19F9D] mb-1">Coverage Score</div>
+                          <div className="text-xs text-[#7A95AB] mb-1">Coverage Score</div>
                           <CoverageBar score={c.coverageScore} />
                         </div>
                         {c.notes && (
-                          <div className="mt-2 text-xs text-[#605E5C] italic">{c.notes}</div>
+                          <div className="mt-2 text-xs text-[#4A5E70] italic">{c.notes}</div>
                         )}
                       </div>
                     );
@@ -196,15 +196,15 @@ export default function QuoteDetailPanel({ quote, onClose, onUpdateStatus }: Pro
           {/* Notes */}
           {quote.notes && (
             <div>
-              <h3 className="font-semibold text-[#323130] mb-2">Notes</h3>
-              <p className="text-sm text-[#605E5C] bg-[#FAF9F8] border border-[#EDEBE9] rounded-lg p-4">{quote.notes}</p>
+              <h3 className="font-semibold text-[#1A2B3C] mb-2">Notes</h3>
+              <p className="text-sm text-[#4A5E70] bg-[#F4F7FA] border border-[#D0DAE8] rounded-lg p-4">{quote.notes}</p>
             </div>
           )}
 
           {/* Actions */}
           {!['Won', 'Lost', 'Declined'].includes(quote.status) && (
-            <div className="border-t border-[#EDEBE9] pt-4">
-              <h3 className="font-semibold text-[#323130] mb-3">Update Quote Outcome</h3>
+            <div className="border-t border-[#D0DAE8] pt-4">
+              <h3 className="font-semibold text-[#1A2B3C] mb-3">Update Quote Outcome</h3>
               <div className="flex gap-3">
                 <button
                   onClick={() => { onUpdateStatus(quote.id, 'Won'); onClose(); }}
@@ -215,7 +215,7 @@ export default function QuoteDetailPanel({ quote, onClose, onUpdateStatus }: Pro
                 </button>
                 <button
                   onClick={() => { onUpdateStatus(quote.id, 'Lost'); onClose(); }}
-                  className="flex-1 flex items-center justify-center gap-2 bg-[#F3F2F1] hover:bg-[#EDEBE9] text-[#605E5C] font-semibold text-sm py-2.5 px-4 rounded transition-colors"
+                  className="flex-1 flex items-center justify-center gap-2 bg-[#EBF0F8] hover:bg-[#D0DAE8] text-[#4A5E70] font-semibold text-sm py-2.5 px-4 rounded transition-colors"
                 >
                   <XCircle size={16} />
                   Mark as Lost
@@ -224,7 +224,7 @@ export default function QuoteDetailPanel({ quote, onClose, onUpdateStatus }: Pro
             </div>
           )}
           {quote.status === 'Won' && (
-            <div className="border-t border-[#EDEBE9] pt-4">
+            <div className="border-t border-[#D0DAE8] pt-4">
               <div className="flex items-center gap-2 text-[#107C10] bg-[#DFF6DD] border border-[#92C353] rounded-lg p-3">
                 <CheckCircle2 size={16} />
                 <span className="font-semibold text-sm">Quote Bound – Policy Issued</span>
@@ -232,8 +232,8 @@ export default function QuoteDetailPanel({ quote, onClose, onUpdateStatus }: Pro
             </div>
           )}
           {quote.status === 'Lost' && (
-            <div className="border-t border-[#EDEBE9] pt-4">
-              <div className="flex items-center gap-2 text-[#605E5C] bg-[#F3F2F1] border border-[#EDEBE9] rounded-lg p-3">
+            <div className="border-t border-[#D0DAE8] pt-4">
+              <div className="flex items-center gap-2 text-[#4A5E70] bg-[#EBF0F8] border border-[#D0DAE8] rounded-lg p-3">
                 <XCircle size={16} />
                 <span className="font-semibold text-sm">Quote Lost – Closed</span>
               </div>
@@ -258,10 +258,10 @@ function Detail({
 }) {
   return (
     <div className="flex items-start gap-2">
-      <span className="text-[#A19F9D] mt-0.5">{icon}</span>
+      <span className="text-[#7A95AB] mt-0.5">{icon}</span>
       <div>
-        <div className="text-xs text-[#A19F9D]">{label}</div>
-        <div className={`text-sm text-[#323130] ${bold ? 'font-bold text-base' : ''}`}>{value}</div>
+        <div className="text-xs text-[#7A95AB]">{label}</div>
+        <div className={`text-sm text-[#1A2B3C] ${bold ? 'font-bold text-base' : ''}`}>{value}</div>
       </div>
     </div>
   );

@@ -4,20 +4,20 @@ import { formatCurrency } from '../hooks/useQuotes';
 export default function CarrierPanel() {
   return (
     <div className="space-y-6">
-      <div className="bg-white border border-[#EDEBE9] rounded-lg p-6 shadow-sm">
-        <h2 className="font-semibold text-[#323130] mb-1">Carrier Appetite & Directory</h2>
-        <p className="text-sm text-[#605E5C] mb-4">
+      <div className="bg-white border border-[#D0DAE8] rounded-lg p-6 shadow-sm">
+        <h2 className="font-semibold text-[#1A2B3C] mb-1">Carrier Appetite & Directory</h2>
+        <p className="text-sm text-[#4A5E70] mb-4">
           Appetite overview for each carrier by business line.
         </p>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#EDEBE9]">
+              <tr className="border-b border-[#D0DAE8]">
                 {['Carrier', 'Appetite Lines', 'Avg Response', 'Hit Ratio', 'Avg Premium', 'Won / Sub'].map(
                   (h) => (
                     <th
                       key={h}
-                      className="pb-3 text-left text-xs text-[#A19F9D] font-semibold uppercase tracking-wide pr-4"
+                      className="pb-3 text-left text-xs text-[#7A95AB] font-semibold uppercase tracking-wide pr-4"
                     >
                       {h}
                     </th>
@@ -25,25 +25,25 @@ export default function CarrierPanel() {
                 )}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#F3F2F1]">
+            <tbody className="divide-y divide-[#EBF0F8]">
               {CARRIERS.map((carrier) => {
                 const perf = CARRIER_PERFORMANCE.find((p) => p.carrierId === carrier.id);
                 return (
-                  <tr key={carrier.id} className="hover:bg-[#EFF6FC] transition-colors">
-                    <td className="py-3 pr-4 font-semibold text-[#323130]">{carrier.name}</td>
+                  <tr key={carrier.id} className="hover:bg-[#EDF5FF] transition-colors">
+                    <td className="py-3 pr-4 font-semibold text-[#1A2B3C]">{carrier.name}</td>
                     <td className="py-3 pr-4">
                       <div className="flex flex-wrap gap-1">
                         {carrier.appetite.map((line) => (
                           <span
                             key={line}
-                            className="text-xs bg-[#EFF6FC] text-[#0078D4] px-1.5 py-0.5 rounded"
+                            className="text-xs bg-[#EDF5FF] text-[#0078D4] px-1.5 py-0.5 rounded"
                           >
                             {line}
                           </span>
                         ))}
                       </div>
                     </td>
-                    <td className="py-3 pr-4 text-[#605E5C]">{carrier.avgResponseDays}d</td>
+                    <td className="py-3 pr-4 text-[#4A5E70]">{carrier.avgResponseDays}d</td>
                     <td className="py-3 pr-4">
                       {perf ? (
                         <span
@@ -58,13 +58,13 @@ export default function CarrierPanel() {
                           {perf.hitRatio}%
                         </span>
                       ) : (
-                        <span className="text-[#C8C6C4]">—</span>
+                        <span className="text-[#B0C4D4]">—</span>
                       )}
                     </td>
-                    <td className="py-3 pr-4 text-[#605E5C]">
+                    <td className="py-3 pr-4 text-[#4A5E70]">
                       {perf ? formatCurrency(perf.avgPremium) : '—'}
                     </td>
-                    <td className="py-3 text-[#605E5C]">
+                    <td className="py-3 text-[#4A5E70]">
                       {perf ? `${perf.quotesWon}/${perf.quotesReceived}` : '—'}
                     </td>
                   </tr>

@@ -103,11 +103,11 @@ function AlertSection({
       icon: <Clock size={16} className="text-[#CA5010]" />,
     },
     purple: {
-      bg: 'bg-[#F4F0FF]',
-      border: 'border-[#8764B8]',
-      badge: 'bg-[#8764B8]/15 text-[#8764B8]',
-      header: 'text-[#8764B8]',
-      icon: <AlertTriangle size={16} className="text-[#8764B8]" />,
+      bg: 'bg-[#E4EDF7]',
+      border: 'border-[#4B6EAF]',
+      badge: 'bg-[#4B6EAF]/15 text-[#4B6EAF]',
+      header: 'text-[#4B6EAF]',
+      icon: <AlertTriangle size={16} className="text-[#4B6EAF]" />,
     },
   };
   const c = colorMap[color];
@@ -122,14 +122,14 @@ function AlertSection({
         {items.map((item) => (
           <div key={item.id} className="px-4 py-3 flex items-center justify-between gap-3">
             <div className="min-w-0">
-              <div className="font-medium text-[#323130] truncate">{item.title}</div>
-              <div className="text-xs text-[#605E5C] truncate">{item.sub}</div>
+              <div className="font-medium text-[#1A2B3C] truncate">{item.title}</div>
+              <div className="text-xs text-[#4A5E70] truncate">{item.sub}</div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
               <span className={`text-xs px-2 py-0.5 rounded font-medium ${c.badge}`}>
                 {item.badge}
               </span>
-              <span className="text-sm font-bold text-[#323130]">{item.value}</span>
+              <span className="text-sm font-bold text-[#1A2B3C]">{item.value}</span>
             </div>
           </div>
         ))}

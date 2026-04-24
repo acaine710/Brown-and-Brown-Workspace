@@ -94,24 +94,24 @@ export function formatCurrency(value: number): string {
 
 export function getStatusColor(status: string): string {
   const map: Record<string, string> = {
-    Open:     'bg-[#EFF6FC] text-[#0078D4]',
-    Submitted:'bg-[#F4F0FF] text-[#8764B8]',
+    Open:     'bg-[#EDF5FF] text-[#0078D4]',
+    Submitted:'bg-[#EDF2FF] text-[#4B6EAF]',
     Quoted:   'bg-[#DFF6DD] text-[#107C10]',
     Stalled:  'bg-[#FDE7E9] text-[#A4262C]',
     Won:      'bg-[#DFF6DD] text-[#107C10]',
-    Lost:     'bg-[#F3F2F1] text-[#605E5C]',
-    Declined: 'bg-[#F3F2F1] text-[#A19F9D]',
+    Lost:     'bg-[#EBF0F8] text-[#4A5E70]',
+    Declined: 'bg-[#EBF0F8] text-[#7A95AB]',
   };
-  return map[status] ?? 'bg-[#F3F2F1] text-[#605E5C]';
+  return map[status] ?? 'bg-[#EBF0F8] text-[#4A5E70]';
 }
 
 export function getPriorityColor(priority: string): string {
   const map: Record<string, string> = {
     High:   'text-[#A4262C]',
     Medium: 'text-[#CA5010]',
-    Low:    'text-[#A19F9D]',
+    Low:    'text-[#7A95AB]',
   };
-  return map[priority] ?? 'text-[#605E5C]';
+  return map[priority] ?? 'text-[#4A5E70]';
 }
 
 export function getBusinessLineIcon(line: string): string {
