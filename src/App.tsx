@@ -635,7 +635,7 @@ function App() {
                             </div>
                             <div className="text-sm text-slate-500">{quote.stageNote}</div>
                           </div>
-                          <div className="min-w-32">
+                          <div className="w-32 shrink-0">
                             <div className="mb-2 flex items-center justify-between text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                               <span>Hit chance</span>
                               <span>{quote.hitProbability}%</span>
