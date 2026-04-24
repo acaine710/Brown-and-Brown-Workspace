@@ -71,7 +71,7 @@ const initialQuotes: Quote[] = [
     status: 'Negotiation',
     stageNote: 'Final pricing requested after loss run review',
     receivedDate: '2026-04-06',
-    effectiveDate: '2026-05-15',
+    effectiveDate: '2026-04-30',
     expirationDate: '2026-05-09',
     annualPremium: 284000,
     revenueOpportunity: 42500,
@@ -90,7 +90,7 @@ const initialQuotes: Quote[] = [
     status: 'Quoted',
     stageNote: 'Awaiting producer review before client presentation',
     receivedDate: '2026-04-11',
-    effectiveDate: '2026-06-01',
+    effectiveDate: '2026-04-29',
     expirationDate: '2026-05-03',
     annualPremium: 362500,
     revenueOpportunity: 51800,
@@ -109,7 +109,7 @@ const initialQuotes: Quote[] = [
     status: 'In Review',
     stageNote: 'Underwriting follow-up on telehealth exposure',
     receivedDate: '2026-04-15',
-    effectiveDate: '2026-05-20',
+    effectiveDate: '2026-05-02',
     expirationDate: '2026-05-12',
     annualPremium: 198400,
     revenueOpportunity: 29700,
@@ -147,7 +147,7 @@ const initialQuotes: Quote[] = [
     status: 'Quoted',
     stageNote: 'Need final wrap-up answer for subcontractor controls',
     receivedDate: '2026-04-07',
-    effectiveDate: '2026-05-25',
+    effectiveDate: '2026-05-08',
     expirationDate: '2026-05-18',
     annualPremium: 173600,
     revenueOpportunity: 26100,
@@ -204,7 +204,7 @@ const initialQuotes: Quote[] = [
     status: 'Negotiation',
     stageNote: 'Comparing retention options before final recommendation',
     receivedDate: '2026-04-10',
-    effectiveDate: '2026-05-30',
+    effectiveDate: '2026-05-10',
     expirationDate: '2026-05-14',
     annualPremium: 144750,
     revenueOpportunity: 21800,
@@ -223,7 +223,7 @@ const initialQuotes: Quote[] = [
     status: 'In Review',
     stageNote: 'Waiting on updated payroll split by class code',
     receivedDate: '2026-04-18',
-    effectiveDate: '2026-06-10',
+    effectiveDate: '2026-05-11',
     expirationDate: '2026-05-29',
     annualPremium: 228900,
     revenueOpportunity: 34100,
@@ -242,7 +242,7 @@ const initialQuotes: Quote[] = [
     status: 'Awaiting Client',
     stageNote: 'Client reviewing side-by-side comparison for 14 locations',
     receivedDate: '2026-04-08',
-    effectiveDate: '2026-05-22',
+    effectiveDate: '2026-04-26',
     expirationDate: '2026-05-01',
     annualPremium: 191100,
     revenueOpportunity: 28700,
@@ -627,7 +627,7 @@ function App() {
                             </div>
                             <div className="text-sm text-slate-500">{quote.stageNote}</div>
                           </div>
-                          <div className="min-w-28">
+                          <div className="min-w-32">
                             <div className="mb-2 flex items-center justify-between text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                               <span>Hit chance</span>
                               <span>{quote.hitProbability}%</span>
