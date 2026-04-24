@@ -280,6 +280,19 @@ function pillClass(status: QuoteStatus) {
   return map[status];
 }
 
+function progressClass(status: QuoteStatus) {
+  if (activeStatuses.includes(status)) return 'bg-blue-600';
+  return status === 'Bound' ? 'bg-emerald-500' : 'bg-rose-500';
+}
+
+function StatusPill({ status }: { status: QuoteStatus }) {
+  return (
+    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${pillClass(status)}`}>
+      {status}
+    </span>
+  );
+}
+
 function App() {
   const [quotes, setQuotes] = useState(initialQuotes);
   const [tab, setTab] = useState<Tab>('pipeline');
@@ -554,7 +567,6 @@ function App() {
                 <div className="grid gap-4 xl:grid-cols-2">
                   {filteredQuotes.map((quote) => {
                     const expiryDays = daysUntil(quote.expirationDate);
-                    const active = activeStatuses.includes(quote.status);
 
                     return (
                       <button
@@ -575,11 +587,7 @@ function App() {
                               {quote.segment} · {quote.carrier}
                             </p>
                           </div>
-                          <span
-                            className={`rounded-full px-3 py-1 text-xs font-semibold ${pillClass(quote.status)}`}
-                          >
-                            {quote.status}
-                          </span>
+                          <StatusPill status={quote.status} />
                         </div>
 
                         <div className="mt-5 grid gap-3 sm:grid-cols-3">
@@ -635,7 +643,7 @@ function App() {
                             <div className="h-2 rounded-full bg-slate-200">
                               <div
                                 className={`h-2 rounded-full ${
-                                  active ? 'bg-blue-600' : quote.status === 'Bound' ? 'bg-emerald-500' : 'bg-rose-500'
+                                  progressClass(quote.status)
                                 }`}
                                 style={{ width: `${quote.hitProbability}%` }}
                               />
@@ -848,9 +856,7 @@ function App() {
                     Quote status
                   </div>
                   <div className="mt-3 flex items-center justify-between">
-                    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${pillClass(selectedQuote.status)}`}>
-                      {selectedQuote.status}
-                    </span>
+                    <StatusPill status={selectedQuote.status} />
                     <span className="text-sm text-slate-300">
                       Hit chance {selectedQuote.hitProbability}%
                     </span>
