@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<!--
+  Brown & Brown Insurance – In-Flight Quotes Workspace
+  Microsoft Dynamics 365 Web Resource
+  File:    bnb_/inflight/bnb_inflight_quotes_main.html
+  Version: 1.0.0
+
+  HOW TO DEPLOY:
+    1. Import the BnBInFlightQuotes solution package into your Dynamics 365 environment.
+    2. This HTML file is registered as a Web Resource (type: Webpage / HTML).
+    3. Add it to a Model-Driven App sitemap under "Sales" or a custom "Quotes" group.
+    4. Grant the "BnB Producer" and "BnB Sales Leader" security roles access to the web resource.
+    5. For live Dataverse data, ensure the bnb_inflightquote table is populated
+       (via AMS360/Sagitta/EPIC integration or Power Automate flows).
+    6. In standalone/demo mode the page uses bnb_sample_data.js automatically.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>In-Flight Quotes – Brown &amp; Brown Insurance</title>
+
+  <!--
+    Chart.js – loaded from CDN for standalone demo.
+    In a locked-down Dynamics environment, host this file as a separate Web Resource:
+      /WebResources/bnb_/inflight/vendor/chart.umd.min.js
+    and change the src below to use the relative web resource path.
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <!-- Sample data (fallback when Dataverse is unavailable) -->
+  <script src="bnb_sample_data.js"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="bnb_inflight_quotes.css" />
+</head>
+
+<body>
+<div class="bnb-workspace">
+
+  <!-- ════════════════════════════════════════════════════════════
+       HEADER
+       ════════════════════════════════════════════════════════════ -->
+  <header class="bnb-header">
+    <div class="bnb-header-brand">
+      <div class="logo-box">B&B</div>
+      <div>
+        <h1>In-Flight Quotes Workspace</h1>
+        <p>Brown &amp; Brown Insurance &nbsp;·&nbsp; Unified Carrier &amp; Segment View</p>
+      </div>
+    </div>
+    <div class="bnb-header-meta">
+      <span id="bnb-data-source-badge" class="live-badge">Live Data</span>
+      <span>Last refresh: <strong id="last-refresh">–</strong></span>
+      <button class="bnb-btn bnb-btn-outline" id="btn-refresh"
+              onclick="BnB.InFlightQuotes.refreshData()" style="color:white;border-color:rgba(255,255,255,.4)">
+        ↻ Refresh
+      </button>
+      <button class="bnb-btn bnb-btn-outline"
+              onclick="BnB.InFlightQuotes.exportCSV()" style="color:white;border-color:rgba(255,255,255,.4)">
+        ↓ Export CSV
+      </button>
+    </div>
+  </header>
+
+  <!-- ════════════════════════════════════════════════════════════
+       TAB NAVIGATION
+       ════════════════════════════════════════════════════════════ -->
+  <nav class="bnb-tabs">
+    <div class="bnb-tab active" data-tab="dashboard" onclick="BnB.InFlightQuotes.switchTab('dashboard')">
+      📊 Dashboard
+    </div>
+    <div class="bnb-tab" data-tab="quotes" onclick="BnB.InFlightQuotes.switchTab('quotes')">
+      📋 All Quotes
+      <span class="tab-badge" id="tab-badge-grid">–</span>
+    </div>
+    <div class="bnb-tab" data-tab="alerts" onclick="BnB.InFlightQuotes.switchTab('alerts')">
+      🚨 Alerts &amp; SLA
+      <span class="tab-badge warn" id="tab-badge-alerts">–</span>
+    </div>
+    <div class="bnb-tab" data-tab="analytics" onclick="BnB.InFlightQuotes.switchTab('analytics')">
+      📈 Hit Ratios &amp; Analytics
+    </div>
+    <div class="bnb-tab" data-tab="competitive" onclick="BnB.InFlightQuotes.switchTab('competitive')">
+      ⚖️ Competitive Analysis
+    </div>
+  </nav>
+
+  <!-- ════════════════════════════════════════════════════════════
+       MAIN CONTENT
+       ════════════════════════════════════════════════════════════ -->
+  <main class="bnb-content">
+
+    <!-- ── FILTER BAR (shared across quote grid & dashboard) ─────────────── -->
+    <div class="bnb-filters" id="bnb-filters">
+      <div class="bnb-filter-group">
+        <label>🔍</label>
+        <input type="text" id="filter-search" placeholder="Search account, quote #, carrier…"
+               oninput="BnB.InFlightQuotes.onFilterChange()" style="max-width:240px" />
+      </div>
+      <div class="bnb-filter-group">
+        <label>Segment</label>
+        <select id="filter-segment" onchange="BnB.InFlightQuotes.onFilterChange()">
+          <option value="all">All</option>
+        </select>
+      </div>
+      <div class="bnb-filter-group">
+        <label>Status</label>
+        <select id="filter-status" onchange="BnB.InFlightQuotes.onFilterChange()">
+          <option value="all">All</option>
+          <option value="open">Open</option>
+          <option value="submitted">Submitted</option>
+          <option value="received">Received</option>
+          <option value="presented">Presented</option>
+          <option value="bound">Bound</option>
+          <option value="lost">Lost</option>
+          <option value="expired">Expired</option>
+          <option value="stalled">Stalled</option>
+        </select>
+      </div>
+      <div class="bnb-filter-group">
+        <label>Carrier</label>
+        <select id="filter-carrier" onchange="BnB.InFlightQuotes.onFilterChange()">
+          <option value="all">All</option>
+        </select>
+      </div>
+      <div class="bnb-filter-group">
+        <label>Producer</label>
+        <select id="filter-producer" onchange="BnB.InFlightQuotes.onFilterChange()">
+          <option value="all">All</option>
+        </select>
+      </div>
+      <div class="bnb-filter-group">
+        <label>Region</label>
+        <select id="filter-region" onchange="BnB.InFlightQuotes.onFilterChange()">
+          <option value="all">All</option>
+        </select>
+      </div>
+      <div class="bnb-filter-group" style="gap:14px">
+        <label style="display:flex;align-items:center;gap:5px;cursor:pointer">
+          <input type="checkbox" id="filter-stalled" onchange="BnB.InFlightQuotes.onFilterChange()" />
+          Stalled only
+        </label>
+        <label style="display:flex;align-items:center;gap:5px;cursor:pointer">
+          <input type="checkbox" id="filter-breach" onchange="BnB.InFlightQuotes.onFilterChange()" />
+          SLA breach only
+        </label>
+      </div>
+      <button class="bnb-btn bnb-btn-outline bnb-btn-sm" onclick="BnB.InFlightQuotes.clearFilters()">✕ Clear</button>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         VIEW: DASHBOARD
+         ══════════════════════════════════════════════ -->
+    <div id="view-dashboard" class="bnb-view active">
+
+      <!-- KPI Row -->
+      <div class="bnb-kpi-row">
+        <div class="bnb-kpi">
+          <div class="bnb-kpi-label">Open Quotes</div>
+          <div class="bnb-kpi-value" id="kpi-open">–</div>
+          <div class="bnb-kpi-sub">Active in-flight</div>
+          <div class="bnb-kpi-trend up" id="kpi-open-trend">↑ +3 vs last week</div>
+        </div>
+        <div class="bnb-kpi warn">
+          <div class="bnb-kpi-label">Stalled Quotes</div>
+          <div class="bnb-kpi-value" id="kpi-stalled">–</div>
+          <div class="bnb-kpi-sub">No activity &gt; threshold</div>
+        </div>
+        <div class="bnb-kpi danger">
+          <div class="bnb-kpi-label">SLA Breaches</div>
+          <div class="bnb-kpi-value" id="kpi-sla-breach">–</div>
+          <div class="bnb-kpi-sub">Response SLA exceeded</div>
+        </div>
+        <div class="bnb-kpi success">
+          <div class="bnb-kpi-label">Hit Ratio (YTD)</div>
+          <div class="bnb-kpi-value" id="kpi-hit-ratio">–</div>
+          <div class="bnb-kpi-sub">Bound ÷ closed quotes</div>
+          <div class="bnb-kpi-trend up">Target: 62%</div>
+        </div>
+        <div class="bnb-kpi accent">
+          <div class="bnb-kpi-label">In-Flight Premium</div>
+          <div class="bnb-kpi-value" style="font-size:22px" id="kpi-premium">–</div>
+          <div class="bnb-kpi-sub">Total quoted (open)</div>
+        </div>
+        <div class="bnb-kpi">
+          <div class="bnb-kpi-label">Avg Days Open</div>
+          <div class="bnb-kpi-value" id="kpi-avg-days">–</div>
+          <div class="bnb-kpi-sub">Active quotes only</div>
+        </div>
+      </div>
+
+      <!-- Charts Row 1 -->
+      <div class="bnb-charts-row">
+        <div class="bnb-chart-card">
+          <h3>📦 Open Quotes by Segment</h3>
+          <div class="bnb-chart-container">
+            <canvas id="chart-segment"></canvas>
+          </div>
+        </div>
+        <div class="bnb-chart-card">
+          <h3>🔄 Quotes by Status</h3>
+          <div class="bnb-chart-container">
+            <canvas id="chart-status"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Stalled / Breach Alerts Preview -->
+      <div class="bnb-section-header">
+        <div class="bnb-section-title">🚨 Priority Attention Required</div>
+        <button class="bnb-btn bnb-btn-outline bnb-btn-sm" onclick="BnB.InFlightQuotes.switchTab('alerts')">View All Alerts →</button>
+      </div>
+      <div id="bnb-alerts-list-preview" class="bnb-alert-list">
+        <div class="bnb-loading"><div class="bnb-spinner"></div> Loading alerts…</div>
+      </div>
+
+      <!-- Quick-access grid: all open quotes sorted by days open -->
+      <div class="bnb-section-header" style="margin-top:24px">
+        <div class="bnb-section-title">📋 Longest Open Quotes</div>
+        <button class="bnb-btn bnb-btn-outline bnb-btn-sm" onclick="BnB.InFlightQuotes.switchTab('quotes')">All Quotes →</button>
+      </div>
+      <div class="bnb-table-wrap" id="bnb-dashboard-grid-wrap">
+        <div class="bnb-loading"><div class="bnb-spinner"></div> Loading…</div>
+      </div>
+
+    </div><!-- /view-dashboard -->
+
+    <!-- ══════════════════════════════════════════════
+         VIEW: ALL QUOTES GRID
+         ══════════════════════════════════════════════ -->
+    <div id="view-quotes" class="bnb-view">
+      <div class="bnb-section-header">
+        <div class="bnb-section-title">📋 In-Flight Quotes</div>
+        <div style="display:flex;gap:8px">
+          <button class="bnb-btn bnb-btn-outline bnb-btn-sm" onclick="BnB.InFlightQuotes.exportCSV()">↓ Export CSV</button>
+        </div>
+      </div>
+
+      <div class="bnb-table-wrap">
+        <table class="bnb-table" id="bnb-quote-table">
+          <thead>
+            <tr>
+              <th onclick="BnB.InFlightQuotes.sortByCol('id')" data-tooltip="Click to sort">Quote # / Source</th>
+              <th onclick="BnB.InFlightQuotes.sortByCol('account')" data-tooltip="Click to sort">Account / Insured</th>
+              <th onclick="BnB.InFlightQuotes.sortByCol('producerName')">Producer</th>
+              <th onclick="BnB.InFlightQuotes.sortByCol('segment')">Segment</th>
+              <th onclick="BnB.InFlightQuotes.sortByCol('carrier')">Carrier / Product</th>
+              <th onclick="BnB.InFlightQuotes.sortByCol('status')">Status</th>
+              <th onclick="BnB.InFlightQuotes.sortByCol('quotedPremium')" style="text-align:right">Premium</th>
+              <th onclick="BnB.InFlightQuotes.sortByCol('slaDueDate')">SLA</th>
+              <th onclick="BnB.InFlightQuotes.sortByCol('daysOpen')" style="text-align:center">Days Open</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="bnb-quote-tbody">
+            <tr><td colspan="10"><div class="bnb-loading"><div class="bnb-spinner"></div> Loading quotes…</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div><!-- /view-quotes -->
+
+    <!-- ══════════════════════════════════════════════
+         VIEW: ALERTS & SLA
+         ══════════════════════════════════════════════ -->
+    <div id="view-alerts" class="bnb-view">
+      <div class="bnb-section-header">
+        <div class="bnb-section-title">🚨 Alerts, SLA Breaches &amp; Stalled Quotes</div>
+      </div>
+
+      <!-- SLA Rules Reference -->
+      <div class="bnb-chart-card" style="margin-bottom:16px">
+        <h3>⏱ SLA Rules by Business Segment</h3>
+        <table class="bnb-table" style="font-size:12px">
+          <thead>
+            <tr>
+              <th>Segment</th>
+              <th>Response SLA (Business Days)</th>
+              <th>Stalled Alert Threshold</th>
+              <th>Escalation Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Personal Lines</td><td>3</td><td>10 days</td><td>sales-se@bbins.com</td></tr>
+            <tr><td>P&amp;C Small Commercial</td><td>5</td><td>14 days</td><td>sales-se@bbins.com</td></tr>
+            <tr><td>P&amp;C Mid-Market Commercial</td><td>10</td><td>21 days</td><td>sales-leaders@bbins.com</td></tr>
+            <tr><td>P&amp;C Large Commercial</td><td>14</td><td>30 days</td><td>sales-leaders@bbins.com</td></tr>
+            <tr><td>Employee Benefits</td><td>10</td><td>21 days</td><td>eb-leaders@bbins.com</td></tr>
+            <tr><td>Dealer Services</td><td>5</td><td>14 days</td><td>dealer-svcs@bbins.com</td></tr>
+            <tr><td>Surety / Bonds</td><td>7</td><td>21 days</td><td>surety@bbins.com</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="bnb-alerts-list" class="bnb-alert-list">
+        <div class="bnb-loading"><div class="bnb-spinner"></div> Loading alerts…</div>
+      </div>
+    </div><!-- /view-alerts -->
+
+    <!-- ══════════════════════════════════════════════
+         VIEW: HIT RATIOS & ANALYTICS
+         ══════════════════════════════════════════════ -->
+    <div id="view-analytics" class="bnb-view">
+
+      <!-- Forecast callout -->
+      <div class="bnb-forecast-callout">
+        <div class="forecast-icon">🔮</div>
+        <div>
+          <h3>Q2 2026 Forecast</h3>
+          <p>Based on current pipeline velocity and historical close rates (61.9% Q1 2026)</p>
+        </div>
+        <div class="bnb-forecast-stats">
+          <div class="bnb-forecast-stat">
+            <div class="val">63.0%</div>
+            <div class="lbl">Forecast Hit Ratio</div>
+          </div>
+          <div class="bnb-forecast-stat">
+            <div class="val">$25.1M</div>
+            <div class="lbl">Forecast Premium Bound</div>
+          </div>
+          <div class="bnb-forecast-stat">
+            <div class="val">148</div>
+            <div class="lbl">Projected Bindings</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trend + Carrier Charts -->
+      <div class="bnb-charts-row">
+        <div class="bnb-chart-card">
+          <h3>📈 Hit Ratio Trend (Quarterly)</h3>
+          <div class="bnb-chart-container" style="height:220px">
+            <canvas id="chart-hr-trend"></canvas>
+          </div>
+        </div>
+        <div class="bnb-chart-card">
+          <h3>🏢 Carrier Hit Ratios – Q1 2026</h3>
+          <div class="bnb-chart-container" style="height:220px">
+            <canvas id="chart-carrier-hit"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hit Ratio Detail Table -->
+      <div class="bnb-section-header">
+        <div class="bnb-section-title">Hit Ratio Detail</div>
+        <div style="display:flex;gap:8px">
+          <button class="bnb-btn bnb-btn-outline bnb-btn-sm hr-tab-btn active" data-view="segment"
+                  onclick="BnB.InFlightQuotes.switchHitRatioView('segment')">By Segment</button>
+          <button class="bnb-btn bnb-btn-outline bnb-btn-sm hr-tab-btn" data-view="producer"
+                  onclick="BnB.InFlightQuotes.switchHitRatioView('producer')">By Producer</button>
+          <button class="bnb-btn bnb-btn-outline bnb-btn-sm hr-tab-btn" data-view="carrier"
+                  onclick="BnB.InFlightQuotes.switchHitRatioView('carrier')">By Carrier</button>
+          <button class="bnb-btn bnb-btn-outline bnb-btn-sm hr-tab-btn" data-view="trend"
+                  onclick="BnB.InFlightQuotes.switchHitRatioView('trend')">Trend</button>
+        </div>
+      </div>
+
+      <div class="bnb-table-wrap">
+        <table class="bnb-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Dimension</th>
+              <th style="text-align:center">Submissions</th>
+              <th style="text-align:center">Bound</th>
+              <th>Hit Ratio</th>
+              <th style="text-align:right">Premium Bound</th>
+            </tr>
+          </thead>
+          <tbody id="bnb-hitratio-tbody">
+            <tr><td colspan="6"><div class="bnb-loading"><div class="bnb-spinner"></div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div><!-- /view-analytics -->
+
+    <!-- ══════════════════════════════════════════════
+         VIEW: COMPETITIVE ANALYSIS
+         ══════════════════════════════════════════════ -->
+    <div id="view-competitive" class="bnb-view">
+      <div class="bnb-section-header">
+        <div class="bnb-section-title">⚖️ Carrier Competitive Analysis</div>
+      </div>
+
+      <!-- Carrier Scorecards -->
+      <div class="bnb-kpi-row" id="bnb-carrier-cards" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Carrier Detail Table -->
+      <div class="bnb-section-header" style="margin-top:20px">
+        <div class="bnb-section-title">Carrier Master – Appetite &amp; Performance</div>
+      </div>
+      <div class="bnb-table-wrap">
+        <table class="bnb-table" id="bnb-carrier-table">
+          <thead>
+            <tr>
+              <th>Carrier</th>
+              <th>NAIC</th>
+              <th>AM Best</th>
+              <th>Preferred?</th>
+              <th>Avg Turnaround</th>
+              <th>Segments Served</th>
+              <th>Hit Ratio (Q1)</th>
+              <th>Portal</th>
+            </tr>
+          </thead>
+          <tbody id="bnb-carrier-tbody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Competitive Win/Loss Analysis -->
+      <div class="bnb-section-header" style="margin-top:24px">
+        <div class="bnb-section-title">📊 Win/Loss by Carrier (All Segments)</div>
+      </div>
+      <div class="bnb-charts-row">
+        <div class="bnb-chart-card" style="grid-column:span 2">
+          <h3>Premium Won vs Lost by Carrier Segment</h3>
+          <p style="font-size:12px;color:#6B7280;margin-bottom:12px">
+            Showing quotes where B&amp;B carriers were quoted alongside competitor carriers.
+            Competitive pricing data sourced from quote lines and email ingestion.
+          </p>
+          <table class="carrier-comp-table" style="width:100%">
+            <thead>
+              <tr>
+                <th>Carrier</th>
+                <th>Quotes Won</th>
+                <th>Quotes Lost To</th>
+                <th>Win Rate vs Competitors</th>
+                <th>Avg Premium vs Market</th>
+                <th>Appetite Strength</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="best-rate">
+                <td>The Hartford</td>
+                <td>31</td>
+                <td>14 (Travelers ×8, Nationwide ×6)</td>
+                <td><div class="hit-ratio-bar-wrap"><div class="hit-ratio-bar"><div class="hit-ratio-fill high" style="width:68.9%"></div></div><span class="hit-ratio-pct">68.9%</span></div></td>
+                <td>-2% vs market (competitive)</td>
+                <td>⭐⭐⭐⭐⭐ Small Comm / EB</td>
+              </tr>
+              <tr>
+                <td>Travelers</td>
+                <td>33</td>
+                <td>19 (Chubb ×9, Zurich ×10)</td>
+                <td><div class="hit-ratio-bar-wrap"><div class="hit-ratio-bar"><div class="hit-ratio-fill high" style="width:63.5%"></div></div><span class="hit-ratio-pct">63.5%</span></div></td>
+                <td>-1% vs market</td>
+                <td>⭐⭐⭐⭐ Mid / Large Comm</td>
+              </tr>
+              <tr>
+                <td>Chubb</td>
+                <td>16</td>
+                <td>12 (Zurich ×7, Travelers ×5)</td>
+                <td><div class="hit-ratio-bar-wrap"><div class="hit-ratio-bar"><div class="hit-ratio-fill medium" style="width:57.1%"></div></div><span class="hit-ratio-pct">57.1%</span></div></td>
+                <td>+4% vs market (premium priced)</td>
+                <td>⭐⭐⭐⭐ Large / Personal</td>
+              </tr>
+              <tr>
+                <td>Liberty Mutual</td>
+                <td>24</td>
+                <td>14 (State Farm ×6, Nationwide ×8)</td>
+                <td><div class="hit-ratio-bar-wrap"><div class="hit-ratio-bar"><div class="hit-ratio-fill high" style="width:63.2%"></div></div><span class="hit-ratio-pct">63.2%</span></div></td>
+                <td>+1% vs market</td>
+                <td>⭐⭐⭐⭐ Small Comm / Dealer</td>
+              </tr>
+              <tr>
+                <td>Zurich North America</td>
+                <td>9</td>
+                <td>9 (Chubb ×5, Travelers ×4)</td>
+                <td><div class="hit-ratio-bar-wrap"><div class="hit-ratio-bar"><div class="hit-ratio-fill low" style="width:50%"></div></div><span class="hit-ratio-pct">50.0%</span></div></td>
+                <td>+6% vs market (high capacity)</td>
+                <td>⭐⭐⭐ Large Comm only</td>
+              </tr>
+              <tr>
+                <td>CNA Financial</td>
+                <td>13</td>
+                <td>9 (Chubb ×4, Travelers ×5)</td>
+                <td><div class="hit-ratio-bar-wrap"><div class="hit-ratio-bar"><div class="hit-ratio-fill medium" style="width:59.1%"></div></div><span class="hit-ratio-pct">59.1%</span></div></td>
+                <td>-0.5% vs market</td>
+                <td>⭐⭐⭐⭐ Mid-Market / EB</td>
+              </tr>
+              <tr>
+                <td>Anthem / BCBS</td>
+                <td>10</td>
+                <td>5 (Aetna ×3, United ×2)</td>
+                <td><div class="hit-ratio-bar-wrap"><div class="hit-ratio-bar"><div class="hit-ratio-fill high" style="width:66.7%"></div></div><span class="hit-ratio-pct">66.7%</span></div></td>
+                <td>+2% vs market</td>
+                <td>⭐⭐⭐⭐⭐ Employee Benefits</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /view-competitive -->
+
+  </main><!-- /bnb-content -->
+
+  <!-- ════════════════════════════════════════════════════════════
+       DETAIL SLIDE-OVER PANEL
+       ════════════════════════════════════════════════════════════ -->
+  <div id="bnb-detail-overlay" class="bnb-detail-overlay"
+       onclick="if(event.target===this) BnB.InFlightQuotes.closeDetail()">
+    <div class="bnb-detail-panel">
+      <div class="bnb-detail-header">
+        <div>
+          <h2 id="bnb-detail-title">Quote Detail</h2>
+          <p id="bnb-detail-subtitle"></p>
+        </div>
+        <button class="bnb-detail-close" onclick="BnB.InFlightQuotes.closeDetail()">✕</button>
+      </div>
+      <div class="bnb-detail-body" id="bnb-detail-body">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+</div><!-- /bnb-workspace -->
+
+<!-- ── Business Logic ───────────────────────────────────────────────────────── -->
+<script src="bnb_inflight_quotes.js"></script>
+
+<script>
+/**
+ * Dashboard-tab extras: render the top-10 longest-open quotes and alerts preview.
+ * Called after the main JS has initialized data.
+ */
+(function patchDashboard() {
+  const origInit = BnB.InFlightQuotes.init;
+  // Extend init to also render the dashboard supplemental widgets
+  BnB.InFlightQuotes.init = async function () {
+    await origInit.call(this);
+    renderDashboardGrid();
+    renderAlertsPreview();
+    renderCarrierCards();
+    renderCarrierTable();
+  };
+
+  function renderDashboardGrid() {
+    const wrap = document.getElementById("bnb-dashboard-grid-wrap");
+    if (!wrap || !window.BNB_SAMPLE_DATA) return;
+    const top10 = window.BNB_SAMPLE_DATA.quotes
+      .filter(q => !["bound","lost","expired"].includes(q.status))
+      .sort((a,b) => (b.daysOpen||0) - (a.daysOpen||0))
+      .slice(0, 8);
+
+    const rows = top10.map(q => {
+      const slaClass = q.slaBreached ? "sla-breach" : "";
+      const slaTxt   = q.slaBreached ? `⚠ ${q.daysOpen - (q.slaDueDate ? 0 : 0)}d overdue` : "✓ OK";
+      const prem     = q.quotedPremium
+        ? new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0}).format(q.quotedPremium)
+        : `<span style="opacity:.6">${q.expiringPremium ? new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0}).format(q.expiringPremium)+" (exp)" : "–"}</span>`;
+
+      return `<tr class="${slaClass}" onclick="BnB.InFlightQuotes.openDetail('${q.id}')" style="cursor:pointer">
+        <td><strong>${q.id}</strong></td>
+        <td>${q.account}</td>
+        <td style="font-size:11px">${q.segment}</td>
+        <td>${q.carrier||"–"}</td>
+        <td><span class="status-badge status-${q.status}">${q.status}</span></td>
+        <td style="text-align:right">${prem}</td>
+        <td style="text-align:center;font-weight:700;color:${(q.daysOpen||0)>30?"#C0392B":(q.daysOpen||0)>14?"#E67E22":"#374151"}">${q.daysOpen||"–"}</td>
+        <td><span class="sla-timer ${q.slaBreached ? "sla-breach":"sla-ok"}">${q.slaBreached?"🚨 Breached":"✓ OK"}</span></td>
+      </tr>`;
+    }).join("");
+
+    wrap.innerHTML = `<table class="bnb-table"><thead><tr>
+      <th>Quote #</th><th>Account</th><th>Segment</th><th>Carrier</th>
+      <th>Status</th><th style="text-align:right">Premium</th>
+      <th style="text-align:center">Days Open</th><th>SLA</th>
+    </tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  function renderAlertsPreview() {
+    const container = document.getElementById("bnb-alerts-list-preview");
+    if (!container || !window.BNB_SAMPLE_DATA) return;
+    const breached = window.BNB_SAMPLE_DATA.quotes
+      .filter(q => q.slaBreached && !["bound","lost","expired"].includes(q.status))
+      .slice(0, 3);
+    const stalled  = window.BNB_SAMPLE_DATA.quotes
+      .filter(q => q.status === "stalled")
+      .slice(0, 2);
+
+    const items = [...breached.map(q => ({q, type:"critical", icon:"🚨", label:"SLA Breached"})),
+                   ...stalled.map(q => ({q, type:"warn",     icon:"⏸️", label:"Stalled"}))];
+
+    if (!items.length) {
+      container.innerHTML = `<div class="bnb-empty"><div class="empty-icon">✅</div><h3>All clear!</h3></div>`;
+      return;
+    }
+
+    container.innerHTML = items.map(({q, type, icon, label}) => `
+      <div class="bnb-alert ${type === "critical" ? "critical" : ""}">
+        <div class="bnb-alert-icon">${icon}</div>
+        <div class="bnb-alert-body">
+          <h4>${label} – ${q.account}</h4>
+          <p>${q.id} · ${q.segment} · ${q.daysOpen} days open</p>
+          <div class="bnb-alert-actions">
+            <button class="bnb-btn bnb-btn-outline bnb-btn-sm" onclick="BnB.InFlightQuotes.openDetail('${q.id}')">View</button>
+          </div>
+        </div>
+      </div>`).join("");
+  }
+
+  function renderCarrierCards() {
+    const container = document.getElementById("bnb-carrier-cards");
+    if (!container || !window.BNB_SAMPLE_DATA) return;
+    const carriers = window.BNB_SAMPLE_DATA.carriers.slice(0, 8);
+    const hrMap = {};
+    window.BNB_SAMPLE_DATA.hitRatios
+      .filter(r => r.carrier && !r.producer && !r.segment)
+      .forEach(r => { hrMap[r.carrier] = r; });
+
+    container.innerHTML = carriers.map(c => {
+      const hr = hrMap[c.name];
+      const pct = hr ? (hr.hitRatioPct || hr.hit_ratio_pct || 0) : null;
+      const pctCls = pct >= 65 ? "success" : pct >= 55 ? "accent" : "warn";
+      return `<div class="bnb-kpi ${pctCls}">
+        <div class="bnb-kpi-label">${c.name}${c.preferred ? " ⭐" : ""}</div>
+        <div class="bnb-kpi-value" style="font-size:20px">${pct != null ? pct.toFixed(1)+"%" : "–"}</div>
+        <div class="bnb-kpi-sub">AM Best: ${c.amBest} &nbsp;·&nbsp; ${c.avgTurnaround}d avg turnaround</div>
+        <div class="bnb-kpi-trend" style="font-size:11px;margin-top:4px">${c.segments.slice(0,2).join(", ")}</div>
+      </div>`;
+    }).join("");
+  }
+
+  function renderCarrierTable() {
+    const tbody = document.getElementById("bnb-carrier-tbody");
+    if (!tbody || !window.BNB_SAMPLE_DATA) return;
+    const hrMap = {};
+    window.BNB_SAMPLE_DATA.hitRatios
+      .filter(r => r.carrier && !r.producer && !r.segment)
+      .forEach(r => { hrMap[r.carrier] = r; });
+
+    tbody.innerHTML = window.BNB_SAMPLE_DATA.carriers.map(c => {
+      const hr  = hrMap[c.name];
+      const pct = hr ? (hr.hitRatioPct || hr.hit_ratio_pct || 0) : null;
+      return `<tr>
+        <td><strong>${c.name}</strong></td>
+        <td>${c.naic}</td>
+        <td><strong>${c.amBest}</strong></td>
+        <td>${c.preferred ? "⭐ Yes" : "No"}</td>
+        <td>${c.avgTurnaround} days</td>
+        <td style="font-size:11px">${c.segments.join(", ")}</td>
+        <td>${pct != null ? `<div class="hit-ratio-bar-wrap"><div class="hit-ratio-bar"><div class="hit-ratio-fill ${pct>=65?"high":pct>=55?"medium":"low"}" style="width:${pct}%"></div></div><span class="hit-ratio-pct">${pct.toFixed(1)}%</span></div>` : "–"}</td>
+        <td><a href="${c.portal}" target="_blank" style="color:#0057B8;font-size:11px">Portal →</a></td>
+      </tr>`;
+    }).join("");
+  }
+
+  // Re-trigger init after the script is appended (DOMContentLoaded already fired)
+  if (document.readyState !== "loading") {
+    // The main JS auto-calls init; here we just re-define it so our patches run too.
+    // Reset and call again after a short delay to let the original init complete.
+    setTimeout(() => {
+      renderDashboardGrid();
+      renderAlertsPreview();
+      renderCarrierCards();
+      renderCarrierTable();
+    }, 200);
+  }
+})();
+</script>
+
+</body>
+</html>

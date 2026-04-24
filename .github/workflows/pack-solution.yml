@@ -8,25 +8,36 @@ on:
 
 jobs:
   pack-solution:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Power Platform CLI (PAC)
-        uses: microsoft/powerplatform-actions/actions-install@v1
+      - name: Build BnBInFlightQuotes solution ZIP
+        run: |
+          mkdir -p out
+          python3 - <<'EOF'
+          import zipfile, os
 
-      - name: Pack solution
-        uses: microsoft/powerplatform-actions/pack-solution@v1
-        with:
-          solution-folder: src/Solution/src
-          solution-file: out/caine.zip
-          solution-type: Unmanaged
+          solution_dir = 'src/Solution'
+          output_zip   = 'out/BnBInFlightQuotes_1_0_0_0_unmanaged.zip'
+
+          with zipfile.ZipFile(output_zip, 'w', zipfile.ZIP_DEFLATED) as zf:
+              for root, dirs, files in os.walk(solution_dir):
+                  for filename in sorted(files):
+                      filepath = os.path.join(root, filename)
+                      arcname  = os.path.relpath(filepath, solution_dir)
+                      zf.write(filepath, arcname)
+                      print(f"  + {arcname}")
+
+          size_kb = os.path.getsize(output_zip) / 1024
+          print(f"\nCreated {output_zip} ({size_kb:.1f} KB)")
+          EOF
 
       - name: Upload solution artifact
         uses: actions/upload-artifact@v4
         with:
-          name: caine-solution
-          path: out/caine.zip
+          name: BnBInFlightQuotes-solution
+          path: out/BnBInFlightQuotes_1_0_0_0_unmanaged.zip
