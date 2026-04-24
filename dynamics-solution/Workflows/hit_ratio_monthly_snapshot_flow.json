@@ -1,0 +1,65 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "_comment": "Brown & Brown Insurance – Hit Ratio Snapshot Flow (Power Automate)",
+  "_description": "Runs on the 1st of each month. Aggregates bound/lost/expired quotes from the prior month and writes hit-ratio snapshot records to bnb_hitratio, broken down by segment, producer, and carrier.",
+
+  "name": "BnB_HitRatio_Monthly_Snapshot",
+  "displayName": "BnB – Monthly Hit Ratio Snapshot",
+  "triggers": {
+    "Recurrence": {
+      "type": "Recurrence",
+      "recurrence": {
+        "frequency": "Month",
+        "interval": 1,
+        "startTime": "2026-01-01T08:00:00Z",
+        "timeZone": "Eastern Standard Time",
+        "schedule": { "monthDays": [1] }
+      }
+    }
+  },
+  "actions": {
+    "Compose_Period": {
+      "type": "Compose",
+      "inputs": {
+        "periodStart": "@{formatDateTime(addMonths(utcNow(), -1), 'yyyy-MM-01')}",
+        "periodEnd":   "@{formatDateTime(addDays(startOfMonth(utcNow()), -1), 'yyyy-MM-dd')}",
+        "periodName":  "@{formatDateTime(addMonths(utcNow(), -1), 'MMMM yyyy')}"
+      }
+    },
+    "Get_Closed_Quotes_Prior_Month": {
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": { "connectionName": "shared_commondataserviceforapps", "operationId": "ListRecords" },
+        "parameters": {
+          "entityName": "bnb_inflightquotes",
+          "$filter": "bnb_submission_date ge @{outputs('Compose_Period')?['periodStart']} and bnb_submission_date le @{outputs('Compose_Period')?['periodEnd']} and (bnb_quote_status eq 200000004 or bnb_quote_status eq 200000005 or bnb_quote_status eq 200000006)",
+          "$select": "bnb_name,bnb_business_segment,bnb_producer_name,bnb_carrier_name,bnb_quote_status,bnb_bound_premium",
+          "$top": 1000
+        }
+      }
+    },
+    "FetchAll_Segments_Aggregate": {
+      "type": "Compose",
+      "_comment": "In production, use a custom connector or Dataverse FetchXML aggregate query. This stub shows the pattern.",
+      "inputs": {
+        "fetchXML_example": "<fetch aggregate='true'><entity name='bnb_inflightquote'><attribute name='bnb_business_segment' groupby='true' alias='segment'/><attribute name='bnb_quote_status' aggregate='count' alias='total'/><filter><condition attribute='bnb_submission_date' operator='ge' value='@{outputs(''Compose_Period'')?[''periodStart'']}'/>  <condition attribute='bnb_submission_date' operator='le' value='@{outputs(''Compose_Period'')?[''periodEnd'']}'/>  </filter></entity></fetch>"
+      }
+    },
+    "Write_Overall_Snapshot": {
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": { "connectionName": "shared_commondataserviceforapps", "operationId": "CreateRecord" },
+        "parameters": {
+          "entityName": "bnb_hitratios",
+          "item/bnb_name":                 "B&B Overall – @{outputs('Compose_Period')?['periodName']}",
+          "item/bnb_period_start":          "@{outputs('Compose_Period')?['periodStart']}",
+          "item/bnb_period_end":            "@{outputs('Compose_Period')?['periodEnd']}",
+          "item/bnb_total_submissions":     "@{length(outputs('Get_Closed_Quotes_Prior_Month')?['body/value'])}",
+          "item/bnb_total_bound":           "@{length(filter(outputs('Get_Closed_Quotes_Prior_Month')?['body/value'], item => equals(item['bnb_quote_status'], 200000004)))}",
+          "item/bnb_hit_ratio_pct":         "@{if(greater(length(outputs('Get_Closed_Quotes_Prior_Month')?['body/value']),0), mul(div(length(filter(outputs('Get_Closed_Quotes_Prior_Month')?['body/value'], item => equals(item['bnb_quote_status'], 200000004))), length(outputs('Get_Closed_Quotes_Prior_Month')?['body/value'])), 100), 0)}",
+          "item/bnb_total_premium_bound":   "@{sum(filter(outputs('Get_Closed_Quotes_Prior_Month')?['body/value'], item => equals(item['bnb_quote_status'], 200000004)), item => coalesce(item['bnb_bound_premium'], 0))}"
+        }
+      }
+    }
+  }
+}
