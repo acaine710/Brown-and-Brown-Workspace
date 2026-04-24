@@ -61,7 +61,7 @@ export default function AlertsPanel() {
       )}
 
       {overdue.length === 0 && dueSoon.length === 0 && stalled.length === 0 && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6 text-center text-emerald-700">
+        <div className="bg-[#DFF6DD] border border-[#92C353] rounded-lg p-6 text-center text-[#107C10]">
           <div className="text-2xl mb-2">✅</div>
           <p className="font-semibold">All clear! No alerts at this time.</p>
         </div>
@@ -89,31 +89,31 @@ function AlertSection({
 }) {
   const colorMap = {
     red: {
-      bg: 'bg-red-50',
-      border: 'border-red-200',
-      badge: 'bg-red-100 text-red-700',
-      header: 'text-red-800',
-      icon: <AlertTriangle size={16} className="text-red-500" />,
+      bg: 'bg-[#FDE7E9]',
+      border: 'border-[#F1707B]',
+      badge: 'bg-[#F1707B]/20 text-[#A4262C]',
+      header: 'text-[#A4262C]',
+      icon: <AlertTriangle size={16} className="text-[#A4262C]" />,
     },
     orange: {
-      bg: 'bg-orange-50',
-      border: 'border-orange-200',
-      badge: 'bg-orange-100 text-orange-700',
-      header: 'text-orange-800',
-      icon: <Clock size={16} className="text-orange-500" />,
+      bg: 'bg-[#FAF6ED]',
+      border: 'border-[#CA5010]',
+      badge: 'bg-[#CA5010]/15 text-[#CA5010]',
+      header: 'text-[#CA5010]',
+      icon: <Clock size={16} className="text-[#CA5010]" />,
     },
     purple: {
-      bg: 'bg-purple-50',
-      border: 'border-purple-200',
-      badge: 'bg-purple-100 text-purple-700',
-      header: 'text-purple-800',
-      icon: <AlertTriangle size={16} className="text-purple-500" />,
+      bg: 'bg-[#F4F0FF]',
+      border: 'border-[#8764B8]',
+      badge: 'bg-[#8764B8]/15 text-[#8764B8]',
+      header: 'text-[#8764B8]',
+      icon: <AlertTriangle size={16} className="text-[#8764B8]" />,
     },
   };
   const c = colorMap[color];
 
   return (
-    <div className={`rounded-xl border ${c.border} ${c.bg} overflow-hidden`}>
+    <div className={`rounded-lg border ${c.border} ${c.bg} overflow-hidden`}>
       <div className={`px-4 py-3 border-b ${c.border} flex items-center gap-2 ${c.header} font-semibold text-sm`}>
         {c.icon}
         {title}
@@ -122,14 +122,14 @@ function AlertSection({
         {items.map((item) => (
           <div key={item.id} className="px-4 py-3 flex items-center justify-between gap-3">
             <div className="min-w-0">
-              <div className="font-medium text-gray-800 truncate">{item.title}</div>
-              <div className="text-xs text-gray-500 truncate">{item.sub}</div>
+              <div className="font-medium text-[#323130] truncate">{item.title}</div>
+              <div className="text-xs text-[#605E5C] truncate">{item.sub}</div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${c.badge}`}>
+              <span className={`text-xs px-2 py-0.5 rounded font-medium ${c.badge}`}>
                 {item.badge}
               </span>
-              <span className="text-sm font-bold text-gray-700">{item.value}</span>
+              <span className="text-sm font-bold text-[#323130]">{item.value}</span>
             </div>
           </div>
         ))}

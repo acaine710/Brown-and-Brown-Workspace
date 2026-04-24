@@ -18,52 +18,46 @@ export default function StatsBar({ stats }: Props) {
     {
       label: 'Active Quotes',
       value: stats.totalOpen,
-      icon: <Zap size={20} />,
-      color: 'text-blue-600',
-      bg: 'bg-blue-50',
-      border: 'border-blue-200',
+      icon: <Zap size={18} />,
+      accent: '#0078D4',
+      textColor: 'text-[#0078D4]',
     },
     {
       label: 'Stalled',
       value: stats.stalled,
-      icon: <AlertCircle size={20} />,
-      color: 'text-red-600',
-      bg: 'bg-red-50',
-      border: 'border-red-200',
+      icon: <AlertCircle size={18} />,
+      accent: '#A4262C',
+      textColor: 'text-[#A4262C]',
       sub: 'Needs attention',
     },
     {
       label: 'Expiring Soon',
       value: stats.expiringCount,
-      icon: <Clock size={20} />,
-      color: 'text-orange-600',
-      bg: 'bg-orange-50',
-      border: 'border-orange-200',
+      icon: <Clock size={18} />,
+      accent: '#CA5010',
+      textColor: 'text-[#CA5010]',
       sub: 'Within 30 days',
     },
     {
       label: 'Pipeline Value',
       value: formatCurrency(stats.estimatedPremiumInFlight),
-      icon: <DollarSign size={20} />,
-      color: 'text-emerald-600',
-      bg: 'bg-emerald-50',
-      border: 'border-emerald-200',
+      icon: <DollarSign size={18} />,
+      accent: '#107C10',
+      textColor: 'text-[#107C10]',
     },
     {
       label: 'Hit Ratio (YTD)',
       value: `${stats.overallHitRatio}%`,
-      icon: <Target size={20} />,
-      color: 'text-violet-600',
-      bg: 'bg-violet-50',
-      border: 'border-violet-200',
+      icon: <Target size={18} />,
+      accent: '#8764B8',
+      textColor: 'text-[#8764B8]',
     },
     {
       label: 'Avg Response Time',
       value: `${stats.avgResponseTime}d`,
-      icon: <TrendingUp size={20} />,
-      color: 'text-sky-600',
-      bg: 'bg-sky-50',
-      border: 'border-sky-200',
+      icon: <TrendingUp size={18} />,
+      accent: '#005A9E',
+      textColor: 'text-[#005A9E]',
     },
   ];
 
@@ -72,14 +66,18 @@ export default function StatsBar({ stats }: Props) {
       {cards.map((c) => (
         <div
           key={c.label}
-          className={`rounded-xl border ${c.border} ${c.bg} p-4 flex flex-col gap-1`}
+          className="bg-white border border-[#EDEBE9] rounded-lg overflow-hidden flex flex-col shadow-sm"
         >
-          <div className={`flex items-center gap-1.5 ${c.color} text-xs font-semibold uppercase tracking-wide`}>
-            {c.icon}
-            {c.label}
+          {/* Microsoft KPI accent bar at top */}
+          <div style={{ height: '3px', backgroundColor: c.accent }} />
+          <div className="p-3 flex flex-col gap-0.5">
+            <div className={`flex items-center gap-1.5 ${c.textColor} text-xs font-semibold uppercase tracking-wide`}>
+              {c.icon}
+              {c.label}
+            </div>
+            <div className={`text-2xl font-bold ${c.textColor}`}>{c.value}</div>
+            {c.sub && <div className="text-xs text-[#A19F9D]">{c.sub}</div>}
           </div>
-          <div className={`text-2xl font-bold ${c.color}`}>{c.value}</div>
-          {c.sub && <div className="text-xs text-gray-500">{c.sub}</div>}
         </div>
       ))}
     </div>

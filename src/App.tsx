@@ -62,22 +62,22 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden font-sans">
+    <div className="flex h-screen bg-[#FAF9F8] overflow-hidden">
       <Sidebar activeTab={activeTab} onChange={handleTabChange} alertCount={alertCount} />
 
       <main className="flex-1 overflow-y-auto">
-        <div className="sticky top-0 z-20 bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shadow-sm">
+        <div className="sticky top-0 z-20 bg-white border-b border-[#EDEBE9] px-6 py-3 flex items-center justify-between shadow-sm">
           <div>
-            <h1 className="text-base font-bold text-gray-900">{headerTitle[activeTab]}</h1>
-            <p className="text-xs text-gray-400">
+            <h1 className="text-base font-semibold text-[#323130]">{headerTitle[activeTab]}</h1>
+            <p className="text-xs text-[#A19F9D]">
               Brown &amp; Brown Insurance · As of April 23, 2025 · Demo Mode
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-3 py-1 font-medium">
+            <span className="text-xs bg-[#EFF6FC] text-[#0078D4] border border-[#C7E0F4] rounded-full px-3 py-1 font-medium">
               🔗 Microsoft Dynamics 365 Connected
             </span>
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-white text-xs font-bold">
+            <div className="w-8 h-8 rounded-full bg-[#0078D4] flex items-center justify-center text-white text-xs font-bold">
               BB
             </div>
           </div>
@@ -89,7 +89,7 @@ export default function App() {
               <StatsBar stats={stats} />
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
                 <div className="lg:col-span-2 space-y-4">
-                  <h2 className="font-semibold text-gray-700">🚨 Needs Attention</h2>
+                  <h2 className="font-semibold text-[#323130]">🚨 Needs Attention</h2>
                   <QuoteTable
                     quotes={filteredQuotes
                       .filter((q) => q.isStalled || getDaysUntilSla(q.slaDeadline) <= 3)
@@ -98,7 +98,7 @@ export default function App() {
                   />
                 </div>
                 <div className="space-y-4">
-                  <h2 className="font-semibold text-gray-700">⚡ Active Alerts</h2>
+                  <h2 className="font-semibold text-[#323130]">⚡ Active Alerts</h2>
                   <AlertsPanel />
                 </div>
               </div>
@@ -110,10 +110,10 @@ export default function App() {
               <StatsBar stats={stats} />
               <FilterBar filters={filters} onChange={setFilters} />
               <div className="flex items-center justify-between">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-[#605E5C]">
                   Showing <strong>{filteredQuotes.length}</strong> quotes across 5 segments · 5 carriers
                 </p>
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-[#A19F9D]">
                   Sources: AMS360 · Sagitta · BenefitPoint · EPIC · Email Ingestion
                 </span>
               </div>

@@ -17,16 +17,16 @@ interface Props {
 
 function CoverageBar({ score }: { score: number }) {
   const color =
-    score >= 90 ? 'bg-emerald-500' : score >= 75 ? 'bg-blue-500' : 'bg-yellow-500';
+    score >= 90 ? 'bg-[#107C10]' : score >= 75 ? 'bg-[#0078D4]' : 'bg-[#CA5010]';
   return (
     <div className="flex items-center gap-2">
-      <div className="flex-1 bg-gray-100 rounded-full h-2">
+      <div className="flex-1 bg-[#F3F2F1] rounded-full h-2">
         <div
           className={`h-2 rounded-full ${color}`}
           style={{ width: `${score}%` }}
         />
       </div>
-      <span className="text-xs font-semibold text-gray-600 w-7 text-right">{score}</span>
+      <span className="text-xs font-semibold text-[#605E5C] w-7 text-right">{score}</span>
     </div>
   );
 }
@@ -46,21 +46,21 @@ export default function QuoteDetailPanel({ quote, onClose, onUpdateStatus }: Pro
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div
-        className="flex-1 bg-black/30 backdrop-blur-sm"
+        className="flex-1 bg-black/20 backdrop-blur-sm"
         onClick={onClose}
       />
       <div className="w-full max-w-2xl bg-white shadow-2xl overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-start justify-between z-10">
+        <div className="sticky top-0 bg-white border-b border-[#EDEBE9] px-6 py-4 flex items-start justify-between z-10">
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xl">{getBusinessLineIcon(quote.businessLine)}</span>
-              <h2 className="text-lg font-bold text-gray-900">{quote.insuredName}</h2>
+              <h2 className="text-lg font-semibold text-[#323130]">{quote.insuredName}</h2>
             </div>
             <div className="flex items-center gap-2 mt-1">
-              <span className="font-mono text-xs text-gray-400">{quote.id}</span>
+              <span className="font-mono text-xs text-[#A19F9D]">{quote.id}</span>
               <span
-                className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${getStatusColor(
                   quote.status
                 )}`}
               >
@@ -73,7 +73,7 @@ export default function QuoteDetailPanel({ quote, onClose, onUpdateStatus }: Pro
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500"
+            className="p-1.5 rounded hover:bg-[#F3F2F1] text-[#605E5C]"
           >
             <X size={20} />
           </button>
@@ -82,7 +82,7 @@ export default function QuoteDetailPanel({ quote, onClose, onUpdateStatus }: Pro
         <div className="p-6 space-y-6">
           {/* Stalled Warning */}
           {quote.isStalled && (
-            <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl p-4 text-red-700">
+            <div className="flex items-center gap-3 bg-[#FDE7E9] border border-[#F1707B] rounded-lg p-4 text-[#A4262C]">
               <AlertTriangle size={20} className="shrink-0" />
               <div>
                 <div className="font-semibold">Stalled – {quote.stalledDays} days with no activity</div>
@@ -92,7 +92,7 @@ export default function QuoteDetailPanel({ quote, onClose, onUpdateStatus }: Pro
           )}
 
           {/* SLA Timer */}
-          <div className={`flex items-center gap-3 rounded-xl p-4 border ${slaColor}`}>
+          <div className={`flex items-center gap-3 rounded-lg p-4 border ${slaColor}`}>
             <Clock size={20} className="shrink-0" />
             <div>
               <div className="font-semibold">
@@ -126,11 +126,11 @@ export default function QuoteDetailPanel({ quote, onClose, onUpdateStatus }: Pro
 
           {/* Carrier Comparison */}
           <div>
-            <h3 className="font-semibold text-gray-800 mb-3">
+            <h3 className="font-semibold text-[#323130] mb-3">
               Carrier Quotes ({quote.carriers.length})
             </h3>
             {quote.carriers.length === 0 ? (
-              <div className="text-sm text-gray-400 italic">
+              <div className="text-sm text-[#A19F9D] italic">
                 No carrier responses yet. Submission pending.
               </div>
             ) : (
@@ -143,48 +143,48 @@ export default function QuoteDetailPanel({ quote, onClose, onUpdateStatus }: Pro
                     return (
                       <div
                         key={c.carrierId}
-                        className={`rounded-xl border p-4 ${
-                          isBest ? 'border-emerald-300 bg-emerald-50' : 'border-gray-200 bg-gray-50'
+                        className={`rounded-lg border p-4 ${
+                          isBest ? 'border-[#92C353] bg-[#DFF6DD]' : 'border-[#EDEBE9] bg-[#FAF9F8]'
                         }`}
                       >
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold text-gray-800">{c.carrierName}</span>
+                            <span className="font-semibold text-[#323130]">{c.carrierName}</span>
                             {isBest && (
-                              <span className="text-xs bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-medium">
+                              <span className="text-xs bg-[#92C353]/30 text-[#107C10] px-1.5 py-0.5 rounded font-medium">
                                 Best Coverage
                               </span>
                             )}
                             {isCheapest && (
-                              <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full font-medium">
+                              <span className="text-xs bg-[#EFF6FC] text-[#0078D4] px-1.5 py-0.5 rounded font-medium">
                                 Lowest Premium
                               </span>
                             )}
                           </div>
-                          <span className="text-lg font-bold text-gray-900">
+                          <span className="text-lg font-bold text-[#323130]">
                             {formatCurrency(c.premium)}
                           </span>
                         </div>
-                        <div className="grid grid-cols-3 gap-3 text-xs text-gray-500 mb-2">
+                        <div className="grid grid-cols-3 gap-3 text-xs text-[#605E5C] mb-2">
                           <div>
-                            <div className="font-medium text-gray-700">Deductible</div>
+                            <div className="font-medium text-[#323130]">Deductible</div>
                             <div>{formatCurrency(c.deductible)}</div>
                           </div>
                           <div>
-                            <div className="font-medium text-gray-700">Limit</div>
+                            <div className="font-medium text-[#323130]">Limit</div>
                             <div>{formatCurrency(c.limit)}</div>
                           </div>
                           <div>
-                            <div className="font-medium text-gray-700">Response</div>
+                            <div className="font-medium text-[#323130]">Response</div>
                             <div>{c.responseDate ?? 'Pending'}</div>
                           </div>
                         </div>
                         <div>
-                          <div className="text-xs text-gray-500 mb-1">Coverage Score</div>
+                          <div className="text-xs text-[#A19F9D] mb-1">Coverage Score</div>
                           <CoverageBar score={c.coverageScore} />
                         </div>
                         {c.notes && (
-                          <div className="mt-2 text-xs text-gray-500 italic">{c.notes}</div>
+                          <div className="mt-2 text-xs text-[#605E5C] italic">{c.notes}</div>
                         )}
                       </div>
                     );
@@ -196,26 +196,26 @@ export default function QuoteDetailPanel({ quote, onClose, onUpdateStatus }: Pro
           {/* Notes */}
           {quote.notes && (
             <div>
-              <h3 className="font-semibold text-gray-800 mb-2">Notes</h3>
-              <p className="text-sm text-gray-600 bg-gray-50 rounded-xl p-4">{quote.notes}</p>
+              <h3 className="font-semibold text-[#323130] mb-2">Notes</h3>
+              <p className="text-sm text-[#605E5C] bg-[#FAF9F8] border border-[#EDEBE9] rounded-lg p-4">{quote.notes}</p>
             </div>
           )}
 
-          {/* Actions: Mark as Bound / Mark as Lost */}
+          {/* Actions */}
           {!['Won', 'Lost', 'Declined'].includes(quote.status) && (
-            <div className="border-t border-gray-100 pt-4">
-              <h3 className="font-semibold text-gray-800 mb-3">Update Quote Outcome</h3>
+            <div className="border-t border-[#EDEBE9] pt-4">
+              <h3 className="font-semibold text-[#323130] mb-3">Update Quote Outcome</h3>
               <div className="flex gap-3">
                 <button
                   onClick={() => { onUpdateStatus(quote.id, 'Won'); onClose(); }}
-                  className="flex-1 flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm py-2.5 px-4 rounded-xl transition-colors"
+                  className="flex-1 flex items-center justify-center gap-2 bg-[#107C10] hover:bg-[#0E6B0E] text-white font-semibold text-sm py-2.5 px-4 rounded transition-colors"
                 >
                   <CheckCircle2 size={16} />
                   Mark as Bound
                 </button>
                 <button
                   onClick={() => { onUpdateStatus(quote.id, 'Lost'); onClose(); }}
-                  className="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold text-sm py-2.5 px-4 rounded-xl transition-colors"
+                  className="flex-1 flex items-center justify-center gap-2 bg-[#F3F2F1] hover:bg-[#EDEBE9] text-[#605E5C] font-semibold text-sm py-2.5 px-4 rounded transition-colors"
                 >
                   <XCircle size={16} />
                   Mark as Lost
@@ -224,16 +224,16 @@ export default function QuoteDetailPanel({ quote, onClose, onUpdateStatus }: Pro
             </div>
           )}
           {quote.status === 'Won' && (
-            <div className="border-t border-gray-100 pt-4">
-              <div className="flex items-center gap-2 text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+            <div className="border-t border-[#EDEBE9] pt-4">
+              <div className="flex items-center gap-2 text-[#107C10] bg-[#DFF6DD] border border-[#92C353] rounded-lg p-3">
                 <CheckCircle2 size={16} />
                 <span className="font-semibold text-sm">Quote Bound – Policy Issued</span>
               </div>
             </div>
           )}
           {quote.status === 'Lost' && (
-            <div className="border-t border-gray-100 pt-4">
-              <div className="flex items-center gap-2 text-gray-600 bg-gray-50 border border-gray-200 rounded-xl p-3">
+            <div className="border-t border-[#EDEBE9] pt-4">
+              <div className="flex items-center gap-2 text-[#605E5C] bg-[#F3F2F1] border border-[#EDEBE9] rounded-lg p-3">
                 <XCircle size={16} />
                 <span className="font-semibold text-sm">Quote Lost – Closed</span>
               </div>
@@ -258,10 +258,10 @@ function Detail({
 }) {
   return (
     <div className="flex items-start gap-2">
-      <span className="text-gray-400 mt-0.5">{icon}</span>
+      <span className="text-[#A19F9D] mt-0.5">{icon}</span>
       <div>
-        <div className="text-xs text-gray-400">{label}</div>
-        <div className={`text-sm text-gray-800 ${bold ? 'font-bold text-base' : ''}`}>{value}</div>
+        <div className="text-xs text-[#A19F9D]">{label}</div>
+        <div className={`text-sm text-[#323130] ${bold ? 'font-bold text-base' : ''}`}>{value}</div>
       </div>
     </div>
   );

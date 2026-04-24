@@ -20,12 +20,13 @@ const SEGMENT_ICONS: Record<InsuranceSegment, string> = {
   'Professional Liability': '⚖️',
 };
 
-const SEGMENT_COLORS: Record<InsuranceSegment, { bg: string; border: string; badge: string }> = {
-  "Workers' Comp": { bg: 'bg-orange-50', border: 'border-orange-200', badge: 'bg-orange-100 text-orange-700' },
-  'Commercial Auto': { bg: 'bg-sky-50', border: 'border-sky-200', badge: 'bg-sky-100 text-sky-700' },
-  'General Liability': { bg: 'bg-green-50', border: 'border-green-200', badge: 'bg-green-100 text-green-700' },
-  'Property': { bg: 'bg-violet-50', border: 'border-violet-200', badge: 'bg-violet-100 text-violet-700' },
-  'Professional Liability': { bg: 'bg-rose-50', border: 'border-rose-200', badge: 'bg-rose-100 text-rose-700' },
+// Microsoft-aligned segment colour palette (blue family + semantic green/purple)
+const SEGMENT_COLORS: Record<InsuranceSegment, { bg: string; border: string; badge: string; accent: string }> = {
+  "Workers' Comp":       { bg: 'bg-[#EFF6FC]', border: 'border-[#C7E0F4]', badge: 'bg-[#C7E0F4] text-[#0078D4]',  accent: '#0078D4' },
+  'Commercial Auto':     { bg: 'bg-[#E8F1FA]', border: 'border-[#A9D3F0]', badge: 'bg-[#A9D3F0] text-[#004578]',  accent: '#106EBE' },
+  'General Liability':   { bg: 'bg-[#DFF6DD]', border: 'border-[#92C353]', badge: 'bg-[#92C353] text-[#107C10]',  accent: '#107C10' },
+  'Property':            { bg: 'bg-[#F4F0FF]', border: 'border-[#B4A0D2]', badge: 'bg-[#B4A0D2] text-[#6B007B]',  accent: '#8764B8' },
+  'Professional Liability': { bg: 'bg-[#DEECF9]', border: 'border-[#83BDED]', badge: 'bg-[#83BDED] text-[#004578]', accent: '#005A9E' },
 };
 
 const SEGMENTS: InsuranceSegment[] = [
@@ -44,25 +45,25 @@ function QuoteCard({ quote, onSelect }: { quote: Quote; onSelect: (q: Quote) => 
   return (
     <div
       onClick={() => onSelect(quote)}
-      className={`rounded-xl border ${colors.border} ${isActive ? colors.bg : 'bg-gray-50 border-gray-200'} p-4 cursor-pointer hover:shadow-md transition-shadow group relative`}
+      className={`rounded-lg border ${colors.border} ${isActive ? colors.bg : 'bg-[#F3F2F1] border-[#EDEBE9]'} p-4 cursor-pointer hover:shadow-md transition-shadow group relative`}
     >
       {/* Stalled indicator */}
       {quote.isStalled && (
         <div className="absolute top-3 right-3">
-          <AlertTriangle size={14} className="text-red-500" />
+          <AlertTriangle size={14} className="text-[#A4262C]" />
         </div>
       )}
 
       <div className="flex items-start justify-between mb-2 pr-5">
         <div>
-          <div className="font-semibold text-gray-900 text-sm leading-tight">{quote.insuredName}</div>
-          <div className="text-xs text-gray-400 mt-0.5 font-mono">{quote.id}</div>
+          <div className="font-semibold text-[#323130] text-sm leading-tight">{quote.insuredName}</div>
+          <div className="text-xs text-[#A19F9D] mt-0.5 font-mono">{quote.id}</div>
         </div>
       </div>
 
       {/* Status + Priority */}
       <div className="flex items-center gap-1.5 mb-3 flex-wrap">
-        <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(quote.status)}`}>
+        <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${getStatusColor(quote.status)}`}>
           {quote.status}
         </span>
         <span className={`text-xs font-semibold ${getPriorityColor(quote.priority)}`}>
@@ -74,36 +75,36 @@ function QuoteCard({ quote, onSelect }: { quote: Quote; onSelect: (q: Quote) => 
       {quote.carriers.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-3">
           {quote.carriers.slice(0, 3).map((c) => (
-            <span key={c.carrierId} className="text-xs bg-white border border-gray-200 rounded px-1.5 py-0.5 text-gray-600">
+            <span key={c.carrierId} className="text-xs bg-white border border-[#EDEBE9] rounded px-1.5 py-0.5 text-[#605E5C]">
               {c.carrierName}
             </span>
           ))}
           {quote.carriers.length > 3 && (
-            <span className="text-xs text-gray-400">+{quote.carriers.length - 3}</span>
+            <span className="text-xs text-[#A19F9D]">+{quote.carriers.length - 3}</span>
           )}
         </div>
       )}
       {quote.carriers.length === 0 && (
-        <div className="text-xs text-gray-400 italic mb-3">Awaiting submissions</div>
+        <div className="text-xs text-[#A19F9D] italic mb-3">Awaiting submissions</div>
       )}
 
       {/* Bottom row */}
-      <div className="flex items-center justify-between text-xs text-gray-500">
+      <div className="flex items-center justify-between text-xs text-[#605E5C]">
         <div className="flex items-center gap-1">
           <DollarSign size={12} />
-          <span className="font-semibold text-gray-700">{formatCurrency(quote.estimatedPremium)}</span>
+          <span className="font-semibold text-[#323130]">{formatCurrency(quote.estimatedPremium)}</span>
         </div>
         <div className="flex items-center gap-1">
           <Clock size={12} />
-          <span className={slaDays < 0 ? 'text-red-600 font-semibold' : slaDays <= 3 ? 'text-orange-600 font-semibold' : ''}>
+          <span className={slaDays < 0 ? 'text-[#A4262C] font-semibold' : slaDays <= 3 ? 'text-[#CA5010] font-semibold' : ''}>
             {slaDays < 0 ? `SLA ${Math.abs(slaDays)}d overdue` : `SLA ${slaDays}d`}
           </span>
         </div>
-        <ChevronRight size={12} className="text-gray-300 group-hover:text-gray-500 transition-colors" />
+        <ChevronRight size={12} className="text-[#C8C6C4] group-hover:text-[#605E5C] transition-colors" />
       </div>
 
       {/* Producer */}
-      <div className="flex items-center gap-1 mt-2 text-xs text-gray-400">
+      <div className="flex items-center gap-1 mt-2 text-xs text-[#A19F9D]">
         <Building2 size={11} />
         <span>{quote.producer}</span>
         {quote.location && <span>· {quote.location}</span>}
@@ -132,12 +133,13 @@ function SegmentColumn({
   return (
     <div className="flex flex-col min-w-[280px] max-w-[300px]">
       {/* Column header */}
-      <div className={`rounded-t-xl border-x border-t ${colors.border} ${colors.bg} px-4 py-3`}>
+      <div className={`rounded-t-lg border-x border-t ${colors.border} ${colors.bg} px-4 py-3`}
+           style={{ borderTop: `3px solid ${colors.accent}` }}>
         <div className="flex items-center gap-2">
           <span className="text-xl">{SEGMENT_ICONS[segment]}</span>
           <div className="flex-1 min-w-0">
-            <div className="font-bold text-gray-800 text-sm">{segment}</div>
-            <div className="text-xs text-gray-500 mt-0.5">
+            <div className="font-bold text-[#323130] text-sm">{segment}</div>
+            <div className="text-xs text-[#605E5C] mt-0.5">
               {activeCount} active · {formatCurrency(totalPremium)}
             </div>
           </div>
@@ -148,9 +150,9 @@ function SegmentColumn({
       </div>
 
       {/* Cards */}
-      <div className={`flex-1 border-x border-b ${colors.border} rounded-b-xl bg-white/60 p-3 space-y-3 overflow-y-auto max-h-[calc(100vh-320px)]`}>
+      <div className={`flex-1 border-x border-b ${colors.border} rounded-b-lg bg-white/70 p-3 space-y-3 overflow-y-auto max-h-[calc(100vh-320px)]`}>
         {quotes.length === 0 ? (
-          <div className="text-center text-sm text-gray-400 italic py-8">No quotes in this segment</div>
+          <div className="text-center text-sm text-[#A19F9D] italic py-8">No quotes in this segment</div>
         ) : (
           quotes.map((q) => (
             <QuoteCard key={q.id} quote={q} onSelect={onSelect} />

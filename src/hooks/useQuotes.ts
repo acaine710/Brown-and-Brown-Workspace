@@ -80,10 +80,10 @@ export function getDaysUntilSla(slaDeadline: string): number {
 }
 
 export function getSlaColor(days: number): string {
-  if (days < 0) return 'text-red-600 bg-red-50';
-  if (days <= 2) return 'text-orange-600 bg-orange-50';
-  if (days <= 5) return 'text-yellow-600 bg-yellow-50';
-  return 'text-green-600 bg-green-50';
+  if (days < 0) return 'text-[#A4262C] bg-[#FDE7E9]';
+  if (days <= 2) return 'text-[#CA5010] bg-[#FAF6ED]';
+  if (days <= 5) return 'text-[#8A5B00] bg-[#FFF4CE]';
+  return 'text-[#107C10] bg-[#DFF6DD]';
 }
 
 export function formatCurrency(value: number): string {
@@ -94,24 +94,24 @@ export function formatCurrency(value: number): string {
 
 export function getStatusColor(status: string): string {
   const map: Record<string, string> = {
-    Open: 'bg-blue-100 text-blue-700',
-    Submitted: 'bg-purple-100 text-purple-700',
-    Quoted: 'bg-green-100 text-green-700',
-    Stalled: 'bg-red-100 text-red-700',
-    Won: 'bg-emerald-100 text-emerald-700',
-    Lost: 'bg-gray-100 text-gray-600',
-    Declined: 'bg-gray-100 text-gray-500',
+    Open:     'bg-[#EFF6FC] text-[#0078D4]',
+    Submitted:'bg-[#F4F0FF] text-[#8764B8]',
+    Quoted:   'bg-[#DFF6DD] text-[#107C10]',
+    Stalled:  'bg-[#FDE7E9] text-[#A4262C]',
+    Won:      'bg-[#DFF6DD] text-[#107C10]',
+    Lost:     'bg-[#F3F2F1] text-[#605E5C]',
+    Declined: 'bg-[#F3F2F1] text-[#A19F9D]',
   };
-  return map[status] ?? 'bg-gray-100 text-gray-600';
+  return map[status] ?? 'bg-[#F3F2F1] text-[#605E5C]';
 }
 
 export function getPriorityColor(priority: string): string {
   const map: Record<string, string> = {
-    High: 'text-red-600',
-    Medium: 'text-yellow-600',
-    Low: 'text-gray-400',
+    High:   'text-[#A4262C]',
+    Medium: 'text-[#CA5010]',
+    Low:    'text-[#A19F9D]',
   };
-  return map[priority] ?? 'text-gray-500';
+  return map[priority] ?? 'text-[#605E5C]';
 }
 
 export function getBusinessLineIcon(line: string): string {
