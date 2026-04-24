@@ -16,7 +16,7 @@ interface Props {
 export default function StatsBar({ stats }: Props) {
   const cards = [
     {
-      label: 'Open Quotes',
+      label: 'Active Quotes',
       value: stats.totalOpen,
       icon: <Zap size={20} />,
       color: 'text-blue-600',
@@ -33,15 +33,16 @@ export default function StatsBar({ stats }: Props) {
       sub: 'Needs attention',
     },
     {
-      label: 'SLA Due ≤ 2 Days',
-      value: stats.dueTodayCount,
+      label: 'Expiring Soon',
+      value: stats.expiringCount,
       icon: <Clock size={20} />,
       color: 'text-orange-600',
       bg: 'bg-orange-50',
       border: 'border-orange-200',
+      sub: 'Within 30 days',
     },
     {
-      label: 'Premium In-Flight',
+      label: 'Pipeline Value',
       value: formatCurrency(stats.estimatedPremiumInFlight),
       icon: <DollarSign size={20} />,
       color: 'text-emerald-600',

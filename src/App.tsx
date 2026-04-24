@@ -3,18 +3,20 @@ import Sidebar from './components/Sidebar';
 import StatsBar from './components/StatsBar';
 import FilterBar from './components/FilterBar';
 import QuoteTable from './components/QuoteTable';
+import QuotePipelineCards from './components/QuotePipelineCards';
 import QuoteDetailPanel from './components/QuoteDetailPanel';
 import AnalyticsPanel from './components/AnalyticsPanel';
 import AlertsPanel from './components/AlertsPanel';
 import CarrierPanel from './components/CarrierPanel';
-import type { FilterState, Quote } from './types';
+import type { FilterState, Quote, QuoteStatus } from './types';
 import { useDashboardStats, useQuotes, getDaysUntilSla } from './hooks/useQuotes';
-import { QUOTES } from './data/fakeData';
+import { QUOTES as INITIAL_QUOTES } from './data/fakeData';
 
-type Tab = 'dashboard' | 'quotes' | 'analytics' | 'alerts' | 'carriers';
+type Tab = 'dashboard' | 'pipeline' | 'analytics' | 'alerts' | 'carriers';
 
 const DEFAULT_FILTERS: FilterState = {
   businessLine: 'All',
+  segment: 'All',
   status: 'All',
   producer: '',
   carrier: '',
@@ -23,25 +25,40 @@ const DEFAULT_FILTERS: FilterState = {
   dateRange: 'all',
 };
 
-function getAlertCount(): number {
-  return QUOTES.filter((q) => {
+function getAlertCount(quotes: Quote[]): number {
+  return quotes.filter((q) => {
     if (['Won', 'Lost', 'Declined'].includes(q.status)) return false;
     return q.isStalled || getDaysUntilSla(q.slaDeadline) <= 3;
   }).length;
 }
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<Tab>('dashboard');
+  const [activeTab, setActiveTab] = useState<Tab>('pipeline');
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
+  const [quotes, setQuotes] = useState<Quote[]>(INITIAL_QUOTES);
 
-  const stats = useDashboardStats();
-  const filteredQuotes = useQuotes(filters);
-  const alertCount = getAlertCount();
+  const stats = useDashboardStats(quotes);
+  const filteredQuotes = useQuotes(filters, quotes);
+  const alertCount = getAlertCount(quotes);
 
   const handleTabChange = (tab: Tab) => {
     setActiveTab(tab);
     setSelectedQuote(null);
+  };
+
+  const handleUpdateStatus = (id: string, status: QuoteStatus) => {
+    setQuotes((prev) =>
+      prev.map((q) => (q.id === id ? { ...q, status } : q))
+    );
+  };
+
+  const headerTitle: Record<Tab, string> = {
+    dashboard: 'In-Flight Quotes — Dashboard',
+    pipeline: 'Quote Pipeline',
+    alerts: 'Alerts & Notifications',
+    analytics: 'Analytics & Hit Ratios',
+    carriers: 'Carrier Directory',
   };
 
   return (
@@ -51,13 +68,7 @@ export default function App() {
       <main className="flex-1 overflow-y-auto">
         <div className="sticky top-0 z-20 bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shadow-sm">
           <div>
-            <h1 className="text-base font-bold text-gray-900">
-              {activeTab === 'dashboard' && 'In-Flight Quotes — Dashboard'}
-              {activeTab === 'quotes' && 'All Open Quotes'}
-              {activeTab === 'alerts' && 'Alerts & Notifications'}
-              {activeTab === 'analytics' && 'Analytics & Hit Ratios'}
-              {activeTab === 'carriers' && 'Carrier Directory'}
-            </h1>
+            <h1 className="text-base font-bold text-gray-900">{headerTitle[activeTab]}</h1>
             <p className="text-xs text-gray-400">
               Brown &amp; Brown Insurance · As of April 23, 2025 · Demo Mode
             </p>
@@ -94,18 +105,19 @@ export default function App() {
             </>
           )}
 
-          {activeTab === 'quotes' && (
+          {activeTab === 'pipeline' && (
             <>
+              <StatsBar stats={stats} />
               <FilterBar filters={filters} onChange={setFilters} />
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-500">
-                  Showing <strong>{filteredQuotes.length}</strong> quotes
+                  Showing <strong>{filteredQuotes.length}</strong> quotes across 5 segments · 5 carriers
                 </p>
                 <span className="text-xs text-gray-400">
                   Sources: AMS360 · Sagitta · BenefitPoint · EPIC · Email Ingestion
                 </span>
               </div>
-              <QuoteTable quotes={filteredQuotes} onSelect={setSelectedQuote} />
+              <QuotePipelineCards quotes={filteredQuotes} onSelect={setSelectedQuote} />
             </>
           )}
 
@@ -119,6 +131,7 @@ export default function App() {
         <QuoteDetailPanel
           quote={selectedQuote}
           onClose={() => setSelectedQuote(null)}
+          onUpdateStatus={handleUpdateStatus}
         />
       )}
     </div>

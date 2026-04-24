@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
-import { differenceInDays, parseISO, isAfter, isBefore, addDays } from 'date-fns';
-import type { FilterState, DashboardStats } from '../types';
-import { QUOTES } from '../data/fakeData';
+import { differenceInDays, parseISO, isBefore, addDays } from 'date-fns';
+import type { FilterState, DashboardStats, Quote } from '../types';
 
 const TODAY = new Date('2025-04-23'); // Fixed date for demo
 
-export function useQuotes(filters: FilterState) {
+export function useQuotes(filters: FilterState, quotes: Quote[]) {
   const filtered = useMemo(() => {
-    return QUOTES.filter((q) => {
+    return quotes.filter((q) => {
       if (filters.businessLine !== 'All' && q.businessLine !== filters.businessLine) return false;
+      if (filters.segment !== 'All' && q.segment !== filters.segment) return false;
       if (filters.status !== 'All' && q.status !== filters.status) return false;
       if (filters.producer && q.producer !== filters.producer) return false;
       if (filters.priority !== 'All' && q.priority !== filters.priority) return false;
@@ -33,26 +33,25 @@ export function useQuotes(filters: FilterState) {
       }
       return true;
     });
-  }, [filters]);
+  }, [filters, quotes]);
 
   return filtered;
 }
 
-export function useDashboardStats(): DashboardStats {
+export function useDashboardStats(quotes: Quote[]): DashboardStats {
   return useMemo(() => {
-    const open = QUOTES.filter((q) =>
+    const open = quotes.filter((q) =>
       ['Open', 'Submitted', 'Quoted', 'Stalled'].includes(q.status)
     );
     const stalled = open.filter((q) => q.isStalled);
-    const dueToday = open.filter((q) => {
-      const deadline = parseISO(q.slaDeadline);
-      return (
-        differenceInDays(deadline, TODAY) <= 2 && isAfter(deadline, TODAY)
-      );
+    const expiring = open.filter((q) => {
+      const expDate = parseISO(q.expirationDate);
+      const daysUntilExp = differenceInDays(expDate, TODAY);
+      return daysUntilExp >= 0 && daysUntilExp <= 30;
     });
     const totalPremium = open.reduce((sum, q) => sum + q.estimatedPremium, 0);
-    const won = QUOTES.filter((q) => q.status === 'Won').length;
-    const total = QUOTES.filter((q) => ['Won', 'Lost'].includes(q.status)).length;
+    const won = quotes.filter((q) => q.status === 'Won').length;
+    const total = quotes.filter((q) => ['Won', 'Lost'].includes(q.status)).length;
     const avgResponse =
       open
         .filter((q) => q.carriers.length > 0)
@@ -68,12 +67,12 @@ export function useDashboardStats(): DashboardStats {
     return {
       totalOpen: open.length,
       stalled: stalled.length,
-      dueTodayCount: dueToday.length,
+      expiringCount: expiring.length,
       estimatedPremiumInFlight: totalPremium,
       overallHitRatio: total > 0 ? Math.round((won / total) * 100) : 0,
       avgResponseTime: Math.round(avgResponse * 10) / 10,
     };
-  }, []);
+  }, [quotes]);
 }
 
 export function getDaysUntilSla(slaDeadline: string): number {

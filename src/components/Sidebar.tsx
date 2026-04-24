@@ -4,10 +4,10 @@ import {
   BookOpen,
   Home,
   LayoutGrid,
-  Search,
+  Layers,
 } from 'lucide-react';
 
-type Tab = 'dashboard' | 'quotes' | 'analytics' | 'alerts' | 'carriers';
+type Tab = 'dashboard' | 'pipeline' | 'analytics' | 'alerts' | 'carriers';
 
 interface Props {
   activeTab: Tab;
@@ -17,7 +17,7 @@ interface Props {
 
 const NAV_ITEMS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: <Home size={18} /> },
-  { id: 'quotes', label: 'Quotes', icon: <Search size={18} /> },
+  { id: 'pipeline', label: 'Quote Pipeline', icon: <Layers size={18} /> },
   { id: 'alerts', label: 'Alerts', icon: <Bell size={18} /> },
   { id: 'analytics', label: 'Analytics', icon: <BarChart2 size={18} /> },
   { id: 'carriers', label: 'Carriers', icon: <BookOpen size={18} /> },

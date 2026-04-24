@@ -1,5 +1,5 @@
-import { X, AlertTriangle, Clock, Building2, MapPin, Users, DollarSign } from 'lucide-react';
-import type { Quote } from '../types';
+import { X, AlertTriangle, Clock, Building2, MapPin, Users, DollarSign, CheckCircle2, XCircle } from 'lucide-react';
+import type { Quote, QuoteStatus } from '../types';
 import {
   formatCurrency,
   getDaysUntilSla,
@@ -12,6 +12,7 @@ import {
 interface Props {
   quote: Quote;
   onClose: () => void;
+  onUpdateStatus: (id: string, status: QuoteStatus) => void;
 }
 
 function CoverageBar({ score }: { score: number }) {
@@ -30,7 +31,7 @@ function CoverageBar({ score }: { score: number }) {
   );
 }
 
-export default function QuoteDetailPanel({ quote, onClose }: Props) {
+export default function QuoteDetailPanel({ quote, onClose, onUpdateStatus }: Props) {
   const slaDays = getDaysUntilSla(quote.slaDeadline);
   const slaColor = getSlaColor(slaDays);
   const bestCarrier = quote.carriers.reduce(
@@ -197,6 +198,45 @@ export default function QuoteDetailPanel({ quote, onClose }: Props) {
             <div>
               <h3 className="font-semibold text-gray-800 mb-2">Notes</h3>
               <p className="text-sm text-gray-600 bg-gray-50 rounded-xl p-4">{quote.notes}</p>
+            </div>
+          )}
+
+          {/* Actions: Mark as Bound / Mark as Lost */}
+          {!['Won', 'Lost', 'Declined'].includes(quote.status) && (
+            <div className="border-t border-gray-100 pt-4">
+              <h3 className="font-semibold text-gray-800 mb-3">Update Quote Outcome</h3>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => { onUpdateStatus(quote.id, 'Won'); onClose(); }}
+                  className="flex-1 flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm py-2.5 px-4 rounded-xl transition-colors"
+                >
+                  <CheckCircle2 size={16} />
+                  Mark as Bound
+                </button>
+                <button
+                  onClick={() => { onUpdateStatus(quote.id, 'Lost'); onClose(); }}
+                  className="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold text-sm py-2.5 px-4 rounded-xl transition-colors"
+                >
+                  <XCircle size={16} />
+                  Mark as Lost
+                </button>
+              </div>
+            </div>
+          )}
+          {quote.status === 'Won' && (
+            <div className="border-t border-gray-100 pt-4">
+              <div className="flex items-center gap-2 text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+                <CheckCircle2 size={16} />
+                <span className="font-semibold text-sm">Quote Bound – Policy Issued</span>
+              </div>
+            </div>
+          )}
+          {quote.status === 'Lost' && (
+            <div className="border-t border-gray-100 pt-4">
+              <div className="flex items-center gap-2 text-gray-600 bg-gray-50 border border-gray-200 rounded-xl p-3">
+                <XCircle size={16} />
+                <span className="font-semibold text-sm">Quote Lost – Closed</span>
+              </div>
             </div>
           )}
         </div>

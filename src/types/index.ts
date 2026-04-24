@@ -7,6 +7,13 @@ export type BusinessLine =
   | 'Dealer Services'
   | 'Surety / Bonds';
 
+export type InsuranceSegment =
+  | "Workers' Comp"
+  | 'Commercial Auto'
+  | 'General Liability'
+  | 'Property'
+  | 'Professional Liability';
+
 export type QuoteStatus =
   | 'Open'
   | 'Submitted'
@@ -43,7 +50,7 @@ export interface Quote {
   businessLine: BusinessLine;
   producer: string;
   accountExecutive: string;
-  segment: string;
+  segment: InsuranceSegment;
   status: QuoteStatus;
   priority: Priority;
   submittedDate: string;
@@ -97,6 +104,7 @@ export interface CarrierPerformance {
 
 export interface FilterState {
   businessLine: BusinessLine | 'All';
+  segment: InsuranceSegment | 'All';
   status: QuoteStatus | 'All';
   producer: string;
   carrier: string;
@@ -108,7 +116,7 @@ export interface FilterState {
 export interface DashboardStats {
   totalOpen: number;
   stalled: number;
-  dueTodayCount: number;
+  expiringCount: number;
   estimatedPremiumInFlight: number;
   overallHitRatio: number;
   avgResponseTime: number;

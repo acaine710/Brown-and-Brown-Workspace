@@ -1,5 +1,5 @@
 import { Search, SlidersHorizontal } from 'lucide-react';
-import type { FilterState, BusinessLine, QuoteStatus, Priority } from '../types';
+import type { FilterState, BusinessLine, QuoteStatus, Priority, InsuranceSegment } from '../types';
 import { PRODUCERS } from '../data/fakeData';
 
 const BUSINESS_LINES: (BusinessLine | 'All')[] = [
@@ -11,6 +11,24 @@ const BUSINESS_LINES: (BusinessLine | 'All')[] = [
   'Employee Benefits',
   'Dealer Services',
   'Surety / Bonds',
+];
+
+const SEGMENTS: (InsuranceSegment | 'All')[] = [
+  'All',
+  "Workers' Comp",
+  'Commercial Auto',
+  'General Liability',
+  'Property',
+  'Professional Liability',
+];
+
+const CARRIERS = [
+  '',
+  'Liberty Mutual',
+  'Travelers',
+  'The Hartford',
+  'Chubb',
+  'Nationwide',
 ];
 
 const STATUSES: (QuoteStatus | 'All')[] = [
@@ -49,15 +67,28 @@ export default function FilterBar({ filters, onChange }: Props) {
         />
       </div>
 
-      {/* Business Line */}
+      {/* Segment */}
       <select
-        value={filters.businessLine}
-        onChange={(e) => set({ businessLine: e.target.value as BusinessLine | 'All' })}
+        value={filters.segment}
+        onChange={(e) => set({ segment: e.target.value as InsuranceSegment | 'All' })}
         className="text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-300"
       >
-        {BUSINESS_LINES.map((bl) => (
-          <option key={bl} value={bl}>
-            {bl === 'All' ? '🗂 All Lines' : bl}
+        {SEGMENTS.map((s) => (
+          <option key={s} value={s}>
+            {s === 'All' ? '🗂 All Segments' : s}
+          </option>
+        ))}
+      </select>
+
+      {/* Carrier */}
+      <select
+        value={filters.carrier}
+        onChange={(e) => set({ carrier: e.target.value })}
+        className="text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-300"
+      >
+        {CARRIERS.map((c) => (
+          <option key={c} value={c}>
+            {c === '' ? 'All Carriers' : c}
           </option>
         ))}
       </select>
@@ -102,6 +133,19 @@ export default function FilterBar({ filters, onChange }: Props) {
         ))}
       </select>
 
+      {/* Business Line */}
+      <select
+        value={filters.businessLine}
+        onChange={(e) => set({ businessLine: e.target.value as BusinessLine | 'All' })}
+        className="text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-300"
+      >
+        {BUSINESS_LINES.map((bl) => (
+          <option key={bl} value={bl}>
+            {bl === 'All' ? 'All Lines' : bl}
+          </option>
+        ))}
+      </select>
+
       {/* Date Range */}
       <select
         value={filters.dateRange}
@@ -121,6 +165,7 @@ export default function FilterBar({ filters, onChange }: Props) {
         onClick={() =>
           onChange({
             businessLine: 'All',
+            segment: 'All',
             status: 'All',
             producer: '',
             carrier: '',
