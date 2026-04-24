@@ -9,6 +9,8 @@ on:
 jobs:
   pack-solution:
     runs-on: windows-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
