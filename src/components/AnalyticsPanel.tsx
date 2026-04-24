@@ -1,5 +1,5 @@
 import {
-  LineChart,
+  ComposedChart,
   Line,
   XAxis,
   YAxis,
@@ -27,7 +27,7 @@ export default function AnalyticsPanel() {
       <div className="bg-white border border-[#EDEBE9] rounded-lg p-6 shadow-sm">
         <h2 className="font-semibold text-[#323130] mb-4">Hit Ratio Trend (YTD)</h2>
         <ResponsiveContainer width="100%" height={240}>
-          <LineChart data={HIT_RATIO_HISTORY} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
+          <ComposedChart data={HIT_RATIO_HISTORY} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#EDEBE9" />
             <XAxis dataKey="period" tick={{ fontSize: 12, fill: '#605E5C' }} />
             <YAxis
@@ -61,7 +61,7 @@ export default function AnalyticsPanel() {
               dot={{ r: 3 }}
               name="hitRatio"
             />
-          </LineChart>
+          </ComposedChart>
         </ResponsiveContainer>
       </div>
 
