@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImportExportXml version="9.2.24.10354"
+                 SolutionPackageVersion="9.2"
+                 languagecode="1033"
+                 generatedBy="CrmLive"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SolutionManifest>
+    <UniqueName>BnBInFlightQuotes</UniqueName>
+    <LocalizedNames>
+      <LocalizedName description="Brown &amp; Brown – In-Flight Quotes Workspace" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="Centralized workspace for Brown &amp; Brown Insurance producers to manage open quotes across all carriers and business segments. Includes SLA tracking, competitive analysis, and hit-ratio dashboards." languagecode="1033" />
+    </Descriptions>
+    <Version>1.0.0.0</Version>
+    <Managed>false</Managed>
+    <Publisher>
+      <UniqueName>BrownAndBrown</UniqueName>
+      <LocalizedNames>
+        <LocalizedName description="Brown &amp; Brown Insurance" languagecode="1033" />
+      </LocalizedNames>
+      <EMailAddress>dynamics@bbins.com</EMailAddress>
+      <SupportingWebsiteUrl>https://www.bbins.com</SupportingWebsiteUrl>
+      <Addresses>
+        <Address>
+          <AddressNumber>1</AddressNumber>
+          <AddressTypeCode>1</AddressTypeCode>
+          <City>Daytona Beach</City>
+          <Country>United States</Country>
+          <Line1>220 S Ridgewood Ave</Line1>
+          <PostalCode>32114</PostalCode>
+          <StateOrProvince>FL</StateOrProvince>
+        </Address>
+      </Addresses>
+      <CustomizationPrefix>bnb</CustomizationPrefix>
+      <CustomizationOptionValuePrefix>10000</CustomizationOptionValuePrefix>
+    </Publisher>
+    <RootComponents>
+      <!-- ============================================================
+           ENTITIES (Dataverse Tables)
+           ============================================================ -->
+      <!-- bnb_carrier -->
+      <RootComponent type="1" schemaName="bnb_carrier" behavior="0" />
+      <!-- bnb_inflightquote -->
+      <RootComponent type="1" schemaName="bnb_inflightquote" behavior="0" />
+      <!-- bnb_quoteline -->
+      <RootComponent type="1" schemaName="bnb_quoteline" behavior="0" />
+      <!-- bnb_hitratio -->
+      <RootComponent type="1" schemaName="bnb_hitratio" behavior="0" />
+      <!-- bnb_sla_rule -->
+      <RootComponent type="1" schemaName="bnb_sla_rule" behavior="0" />
+
+      <!-- ============================================================
+           WEB RESOURCES
+           ============================================================ -->
+      <RootComponent type="61" schemaName="bnb_/inflight/bnb_inflight_quotes_main.html" behavior="0" />
+      <RootComponent type="61" schemaName="bnb_/inflight/bnb_inflight_quotes.js"       behavior="0" />
+      <RootComponent type="61" schemaName="bnb_/inflight/bnb_inflight_quotes.css"      behavior="0" />
+      <RootComponent type="61" schemaName="bnb_/inflight/bnb_sample_data.js"           behavior="0" />
+    </RootComponents>
+    <MissingDependencies />
+  </SolutionManifest>
+</ImportExportXml>
