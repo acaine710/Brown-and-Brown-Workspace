@@ -366,10 +366,14 @@ function App() {
   const markQuote = (status: Extract<QuoteStatus, 'Bound' | 'Lost'>) => {
     if (!selectedQuote) return;
 
+    const stageNote =
+      status === 'Bound' ? 'Marked bound from quote details' : 'Marked lost from quote details';
+    const hitProbability = status === 'Bound' ? 100 : 0;
+
     setQuotes((currentQuotes) =>
       currentQuotes.map((quote) =>
         quote.id === selectedQuote.id
-          ? { ...quote, status, stageNote: status === 'Bound' ? 'Marked bound from quote details' : 'Marked lost from quote details', hitProbability: status === 'Bound' ? 100 : 0 }
+          ? { ...quote, status, stageNote, hitProbability }
           : quote
       )
     );
